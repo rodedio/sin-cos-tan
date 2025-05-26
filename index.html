@@ -146,7 +146,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>📐 Sinus, Cosinus en Tangens Leren</h1>
+        <h1>📐 Sinus, Cosinus en Tangens Leren (met D3.js)</h1>
         <div style="text-align: center;">
             <button id="toggleExplanationButton">Toon Uitleg</button>
         </div>
@@ -154,14 +154,14 @@
 
         <div class="explanation" style="display: none;"> {/* Start verborgen */}
             <h2>Uitleg: SOL CAL TOA</h2>
-            <p>In een <strong>rechthoekige driehoek</strong> kunnen we de sinus, cosinus en tangens gebruiken...</p>
+            <p>In een <strong>rechthoekige driehoek</strong> kunnen we de sinus, cosinus en tangens gebruiken om onbekende zijden of hoeken te berekenen. Een rechthoekige driehoek heeft één hoek van 90°.</p>
              <ul>
-                <li><strong>Langste zijde (L):</strong> De langste zijde.</li>
-                <li><strong>Overstaande rechthoekszijde (O):</strong> De zijde tegenover de hoek waaruit je kijkt.</li>
-                <li><strong>Aanliggende rechthoekszijde (A):</strong> De rechthoekszijde die aan de hoek vastzit...</li>
+                <li><strong>Langste zijde (L):</strong> De zijde tegenover de rechte hoek. Dit is altijd de langste zijde. Wordt ook wel 'schuine zijde' of 'hypotenusa' genoemd.</li>
+                <li><strong>Overstaande rechthoekszijde (O):</strong> De rechthoekszijde die tegenover de hoek ligt waar vanuit je kijkt (niet de rechte hoek).</li>
+                <li><strong>Aanliggende rechthoekszijde (A):</strong> De rechthoekszijde die aan de hoek vastzit waar vanuit je kijkt (en niet de langste zijde is).</li>
             </ul>
             <div class="triangle-container-wrapper">
-                <p>Stel je een rechthoekige driehoek ABC voor, met de rechte hoek bij C.</p>
+                <p>Stel je een rechthoekige driehoek ABC voor, met de rechte hoek bij C. We kijken vanuit hoek A.</p>
                 <svg id="explanationTriangleSvg" width="250" height="200"></svg>
                 <p>(Dit is een voorbeeld driehoek.)</p>
             </div>
@@ -171,13 +171,13 @@
                 <li><strong>C</strong>AL: <strong>C</strong>osinus (hoek) = <strong>A</strong>anliggende / <strong>L</strong>angste</li>
                 <li><strong>T</strong>OA: <strong>T</strong>angens (hoek) = <strong>O</strong>verstaande / <strong>A</strong>anliggende</li>
             </ul>
-            <p>In formules (waarbij α de hoek is):</p>
+            <p>In formules (waarbij α de hoek is waar vanuit je kijkt, bijvoorbeeld hoek A):</p>
             <ul>
                 <li>$$\sin(\alpha) = \frac{\text{Overstaande rechthoekszijde}}{\text{Langste zijde}}$$</li>
                 <li>$$\cos(\alpha) = \frac{\text{Aanliggende rechthoekszijde}}{\text{Langste zijde}}$$</li>
                 <li>$$\tan(\alpha) = \frac{\text{Overstaande rechthoekszijde}}{\text{Aanliggende rechthoekszijde}}$$</li>
             </ul>
-             <p>Om een hoek te berekenen (inverse functies):</p>
+             <p>Om een hoek te berekenen als je twee zijden weet, gebruik je de inverse functies (arcsinus, arccosinus, arctangens), vaak genoteerd als $\sin^{-1}$, $\cos^{-1}$, $\tan^{-1}$ op je rekenmachine:</p>
             <ul>
                 <li>$$ \alpha = \sin^{-1}\left(\frac{O}{L}\right) $$</li>
                 <li>$$ \alpha = \cos^{-1}\left(\frac{A}{L}\right) $$</li>
@@ -218,7 +218,6 @@
         const answerLabelElement = document.getElementById('answerLabel');
         const feedbackElement = document.getElementById('feedback');
         const uitlegFoutElement = document.getElementById('uitleg-fout');
-        const uitlegFoutLijst = document.getElementById('uitleg-fout-lijst'); // Is niet meer in HTML, kan weg of hergebruikt
         const uitlegFoutRegel = document.getElementById('uitleg-fout-regel');
         const uitlegFoutBerekening = document.getElementById('uitleg-fout-berekening');
         const uitlegStappenContainer = document.getElementById('uitleg-fout-stappen-container');
@@ -231,7 +230,7 @@
                 explanationDiv.style.display = 'block';
                 toggleExplanationButton.textContent = 'Verberg Uitleg';
                 if (document.getElementById('explanationTriangleSvg').childNodes.length === 0) { 
-                     drawExplanationTriangle();
+                    drawExplanationTriangle();
                 }
             } else {
                 explanationDiv.style.display = 'none';
@@ -247,76 +246,71 @@
         function toDegrees(radians) { return radians * (180 / Math.PI); }
 
         function drawExplanationTriangle() {
-            const angleA_deg = 30;
-            const side_a_expl = 10;
-            const side_o_expl = side_a_expl * Math.tan(toRadians(angleA_deg));
-            const side_l_expl = side_a_expl / Math.cos(toRadians(angleA_deg));
+            const angleA_deg = 30; 
+            const side_a_expl = 10; 
+            const side_o_expl = side_a_expl * Math.tan(toRadians(angleA_deg)); 
+            const side_l_expl = side_a_expl / Math.cos(toRadians(angleA_deg)); 
             drawTriangleGeneric("explanationTriangleSvg", angleA_deg, side_l_expl, side_o_expl, side_a_expl, "Hoek A", "Langste (L)", "Overst. (O)", "Aanlig. (A)", null, null, null, true);
         }
-
+        
         function drawTriangleGeneric(svgIdOrSelection, angleA_deg, side_l, side_o, side_a, labelAngleA, labelL, labelO, labelA, highlightKeys = null, customWidth = null, customHeight = null, showSidePrefixes = true, isAngleQuestion = false) { 
             const svg = (typeof svgIdOrSelection === 'string') ? d3.select("#" + svgIdOrSelection) : svgIdOrSelection;
-            svg.selectAll("*").remove();
+            svg.selectAll("*").remove(); 
 
             const svgWidth = customWidth || parseFloat(svg.attr("width"));
             const svgHeight = customHeight || parseFloat(svg.attr("height"));
-
             const PADDING = customWidth ? 20 : 30; 
             const availableWidth = svgWidth - 2 * PADDING;
             const availableHeight = svgHeight - 2 * PADDING;
 
             let scale;
-            const temp_angle_rad = toRadians(angleA_deg || 30);
-
+            const temp_angle_rad = toRadians(angleA_deg || 30); 
             let ref_a = side_a, ref_o = side_o;
 
-            if (side_l && side_l > 0) {
+            if (side_l && side_l > 0) { 
                 if (side_a === null || side_a <= 0) ref_a = side_l * Math.cos(temp_angle_rad);
                 if (side_o === null || side_o <= 0) ref_o = side_l * Math.sin(temp_angle_rad);
             }
-            
             if (!ref_a || ref_a <= 0) ref_a = (ref_o && ref_o > 0 && temp_angle_rad > 0.01 && temp_angle_rad < Math.PI/2 - 0.01) ? ref_o / Math.tan(temp_angle_rad) : 10;
             if (!ref_o || ref_o <= 0) ref_o = (ref_a && ref_a > 0 && temp_angle_rad > 0.01 && temp_angle_rad < Math.PI/2 - 0.01) ? ref_a * Math.tan(temp_angle_rad) : 10;
 
-
-            const scaleX = ref_a > 0.1 ? availableWidth / ref_a : availableWidth / 10;
+            const scaleX = ref_a > 0.1 ? availableWidth / ref_a : availableWidth / 10; 
             const scaleY = ref_o > 0.1 ? availableHeight / ref_o : availableHeight / 10;
             scale = Math.min(scaleX, scaleY);
-            scale = Math.max(customWidth ? 2 : 3, Math.min(scale, customWidth ? 15 : 25));
+            scale = Math.max(customWidth ? 2 : 3, Math.min(scale, customWidth ? 15 : 25)); 
 
-            const scaled_a_val = side_a !== null ? side_a * scale : ( (side_l !== null && side_o !== null) ? Math.sqrt(Math.max(0.1,(side_l*scale)**2 - (side_o*scale)**2)) : ( (side_l !== null) ? (side_l*scale) * Math.cos(temp_angle_rad) : ( (side_o !== null) ? (side_o*scale) / Math.tan(temp_angle_rad) : 10*scale ) ) );
-            const scaled_o_val = side_o !== null ? side_o * scale : ( (side_l !== null && side_a !== null) ? Math.sqrt(Math.max(0.1,(side_l*scale)**2 - (side_a*scale)**2)) : ( (side_l !== null) ? (side_l*scale) * Math.sin(temp_angle_rad) : ( (side_a !== null) ? (side_a*scale) * Math.tan(temp_angle_rad) : 10*scale*Math.tan(temp_angle_rad) ) ) );
+            const scaled_a_val = side_a !== null ? side_a * scale : ( (side_l !== null && side_o !== null && angleA_deg === null) ? Math.sqrt(Math.max(0.1,(side_l*scale)**2 - (side_o*scale)**2)) : ( (side_l !== null && angleA_deg !== null) ? (side_l*scale) * Math.cos(toRadians(angleA_deg)) : ( (side_o !== null && angleA_deg !== null) ? (side_o*scale) / Math.tan(toRadians(angleA_deg)) : 10*scale ) ) );
+            const scaled_o_val = side_o !== null ? side_o * scale : ( (side_l !== null && side_a !== null && angleA_deg === null) ? Math.sqrt(Math.max(0.1,(side_l*scale)**2 - (side_a*scale)**2)) : ( (side_l !== null && angleA_deg !== null) ? (side_l*scale) * Math.sin(toRadians(angleA_deg)) : ( (side_a !== null && angleA_deg !== null) ? (side_a*scale) * Math.tan(toRadians(angleA_deg)) : 10*scale*Math.tan(toRadians(angleA_deg || 30)) ) ) );
             
             const final_scaled_a = Math.max(1, scaled_a_val); 
             const final_scaled_o = Math.max(1, scaled_o_val);
 
-
             const Cx = PADDING;
             const Cy = svgHeight - PADDING;
-            const Ax = Cx + final_scaled_a;
+            const Ax = Cx + final_scaled_a; 
             const Ay = Cy;
-            const Bx = Cx;
+            const Bx = Cx;                  
             const By = Cy - final_scaled_o;
 
-            const group = svg.append("g");
+            const group = svg.append("g"); 
 
             const sidesData = [
-                { id: 'AC', x1: Cx, y1: Cy, x2: Ax, y2: Ay, label: labelA, value: side_a, key: 'A', name: "Aanliggende" },
-                { id: 'BC', x1: Cx, y1: Cy, x2: Bx, y2: By, label: labelO, value: side_o, key: 'O', name: "Overstaande" },
-                { id: 'AB', x1: Ax, y1: Ay, x2: Bx, y2: By, label: labelL, value: side_l, key: 'L', name: "Langste" }
+                { id: 'AC', x1: Cx, y1: Cy, x2: Ax, y2: Ay, label: labelA, value: side_a, key: 'A', name: "Aanliggende" }, 
+                { id: 'BC', x1: Cx, y1: Cy, x2: Bx, y2: By, label: labelO, value: side_o, key: 'O', name: "Overstaande" },  
+                { id: 'AB', x1: Ax, y1: Ay, x2: Bx, y2: By, label: labelL, value: side_l, key: 'L', name: "Langste" }       
             ];
             
-            const isHighlighted = (key) => highlightKeys && (Array.isArray(highlightKeys) ? highlightKeys.includes(key) : highlightKeys === key || highlightKeys === key); // highlightKeys can be single key or array
+            const isHighlighted = (key) => highlightKeys && (Array.isArray(highlightKeys) ? highlightKeys.includes(key) : highlightKeys === key);
 
             group.selectAll("line.triangle-side")
-                .data(sidesData)
+                .data(sidesData) 
                 .join(
                     enter => enter.append("line")
                         .attr("class", "triangle-side")
                         .attr("x1", d => d.x1).attr("y1", d => d.y1)
-                        .attr("x2", d => d.x1).attr("y2", d => d.y1)
-                        .attr("stroke", d => isHighlighted(d.key) ? "#d9534f" : "#333")
-                        .attr("stroke-width", d => isHighlighted(d.key) ? (customWidth ? 2.5 : 3.5) : (customWidth ? 1.5 : 2))
+                        .attr("x2", d => d.x1).attr("y2", d => d.y1) 
+                        .attr("stroke", d => isHighlighted(d.key) ? "#d9534f" : "#333") 
+                        .attr("stroke-width", d => isHighlighted(d.key) ? (customWidth ? 2.5 : 3.5) : (customWidth ? 1.5 : 2)) 
                         .transition().duration(customWidth ? 300 : 750) 
                         .attr("x2", d => d.x2).attr("y2", d => d.y2),
                     update => update 
@@ -341,75 +335,113 @@
                 .style("opacity", 0).transition().duration(customWidth ? 200:500).delay(customWidth ? 200:600).style("opacity", 1);
 
             group.selectAll("text.side-label")
-                .data(sidesData.filter(d => d.value !== null && d.value !== undefined || isHighlighted(d.key)))
+                .data(sidesData) 
                 .join("text")
                 .attr("class", "side-label")
                 .attr("x", d => { 
-                    if (d.id === 'AC') return (d.x1 + d.x2) / 2;
-                    if (d.id === 'BC') return d.x1 - (customWidth ? 5 : 10);
+                    if (d.id === 'AC') return (d.x1 + d.x2) / 2; 
+                    if (d.id === 'BC') return d.x1 - (customWidth ? 5 : 10); 
                     return (d.x1 + d.x2) / 2; 
                 })
                 .attr("y", d => { 
-                    if (d.id === 'AC') return d.y1 + (customWidth ? 10 : 20);
-                    if (d.id === 'BC') return (d.y1 + d.y2) / 2 + (customWidth ? 2 : 0);
+                    if (d.id === 'AC') return d.y1 + (customWidth ? 10 : 20); 
+                    if (d.id === 'BC') return (d.y1 + d.y2) / 2 + (customWidth ? 2 : 0); 
                     return (d.y1 + d.y2) / 2 - (customWidth ? 6 : 12); 
                 })
-                .attr("transform", d => {
+                .attr("transform", d => { 
                     if (d.id === 'AB' && showSidePrefixes) { 
-                         const angleRad = Math.atan2(By - Ay, Bx - Ax); 
-                         return `rotate(${toDegrees(angleRad)}, ${(d.x1+d.x2)/2}, ${(d.y1+d.y2)/2})`;
+                        const angleRad = Math.atan2(By - Ay, Bx - Ax); 
+                        return `rotate(${toDegrees(angleRad)}, ${(d.x1+d.x2)/2}, ${(d.y1+d.y2)/2})`;
                     }
                     return ""; 
                 })
                 .attr("text-anchor", d => (d.id === 'BC' ? "end" : "middle"))
                 .text(d => {
-                    let labelText;
-                    const valueText = d.value !== null && d.value !== undefined ? d.value.toFixed(1) : '?';
-                    const prefix = d.label.split(" ")[0]; 
-
-                    if (showSidePrefixes) {
+                    if (showSidePrefixes) { // Uitleg context (stappen, hoofd-uitleg)
+                        let labelText;
+                        const valueText = d.value !== null && d.value !== undefined ? d.value.toFixed(1) : (isHighlighted(d.key) ? '?' : '');
+                        if (valueText === '' && !isHighlighted(d.key)) return ''; 
+                        
+                        const prefix = d.label.split(" ")[0];
                         labelText = `${prefix}: ${valueText}`;
                         if (valueText === '?' && isHighlighted(d.key)) { 
-                            labelText = `${prefix} (${d.name.substring(0,6)}.*?): ?`;
+                            labelText = `${prefix} (${d.name.substring(0,6)}...?): ?`;
                         }
-                    } else {
-                        labelText = valueText;
+                        return labelText;
+                    } else { // Vraag context (!showSidePrefixes)
+                        // Toon '?' als het de te zoeken ZIJDE is in een zijde-vraag
+                        if (isHighlighted(d.key) && d.key === currentQuestionData.teVindenKey && !currentQuestionData.isAngleQuestion) {
+                            return '?';
+                        } 
+                        // Toon de waarde als de zijde een waarde heeft (dus een bekende zijde voor de vraag)
+                        else if (d.value !== null && d.value !== undefined) {
+                            return d.value.toFixed(1);
+                        }
+                        // Anders geen label (bv. onbekende zijde die niet teVindenKey is in zijdevraag, of voor hoekvraag waar zijdelabels niet zo getoond worden)
+                        return '';
                     }
-                    return labelText;
                 })
-                .style("fill", d => isHighlighted(d.key) ? "#d9534f" : "#007bff")
+                .style("fill", d => isHighlighted(d.key) ? "#d9534f" : "#007bff") 
                 .style("font-weight", d => isHighlighted(d.key) ? "bold" : "normal")
                 .style("font-size", customWidth ? "9px" : "12px")
                 .style("opacity", 0).transition().duration(customWidth ? 200:500).delay(customWidth ? 250:700).style("opacity", 1);
 
-            if (angleA_deg && (!isAngleQuestion || (isAngleQuestion && showSidePrefixes) || (isAngleQuestion && isHighlighted('angleA')) ) ) { // Show angle if not an angle question OR if it's for explanation OR if it's the one to find and highlighted
-                const angleText = (isAngleQuestion && !showSidePrefixes && !isHighlighted('angleA')) ? "Hoek A: ?" : `${labelAngleA.split(" ")[0]}: ${angleA_deg.toFixed(1)}°`;
+            const angleLabelX = Ax - (customWidth ? 15 : (final_scaled_a > 30 ? 30 : 15));
+            const angleLabelY = Ay - (customWidth ? 5 : 10);
+            const angleFontSize = customWidth ? "9px" : "12px";
+
+            if (isAngleQuestion && !showSidePrefixes && isHighlighted('angleA')) {
                 group.append("text")
                     .attr("class", "angle-label-text")
-                    .attr("x", Ax - (customWidth ? 15 : (final_scaled_a > 30 ? 30: 15)) )
-                    .attr("y", Ay - (customWidth ? 5 : 10))
-                    .text(angleText)
-                    .style("font-size", customWidth ? "9px" : "12px")
-                    .style("fill", isHighlighted('angleA') ? "#d9534f" : "red")
-                    .style("font-weight", isHighlighted('angleA') ? "bold" : "bold")
+                    .attr("x", angleLabelX).attr("y", angleLabelY)
+                    .text(`${labelAngleA.split(" ")[0]}: ?`)
+                    .style("font-size", angleFontSize)
+                    .style("fill", "#d9534f") 
+                    .style("font-weight", "bold")
                     .style("opacity", 0).transition().duration(customWidth ? 200:500).delay(customWidth ? 250:700).style("opacity", 1);
-                
+
                 const arcRadius = Math.min((customWidth ? 12 : 25), final_scaled_a / 3, final_scaled_o / 3);
                 if (arcRadius > (customWidth ? 2 : 5)) {
-                     const arcGenerator = d3.arc()
+                    const dummyAngleForArc = 20; 
+                    const arcGenerator = d3.arc()
                         .innerRadius(arcRadius - (customWidth ? 1 : 2))
                         .outerRadius(arcRadius)
-                        .startAngle(Math.PI) 
-                        .endAngle(Math.PI + toRadians(angleA_deg)); 
+                        .startAngle(Math.PI)
+                        .endAngle(Math.PI + toRadians(dummyAngleForArc));
                     group.append("path")
-                        .attr("transform", `translate(${Ax}, ${Ay})`) 
-                        .attr("d", arcGenerator).attr("fill", isHighlighted('angleA') ? "rgba(255,0,0,0.5)" : "rgba(255,0,0,0.3)")
+                        .attr("transform", `translate(${Ax}, ${Ay}) rotate(180)`)
+                        .attr("d", arcGenerator)
+                        .attr("fill", "rgba(255,0,0,0.5)") 
+                        .style("opacity", 0).transition().duration(customWidth ? 200:500).delay(customWidth ? 300:750).style("opacity", 1);
+                }
+            } else if (angleA_deg && (!isAngleQuestion || (isAngleQuestion && showSidePrefixes))) {
+                group.append("text")
+                    .attr("class", "angle-label-text")
+                    .attr("x", angleLabelX).attr("y", angleLabelY)
+                    .text(`${labelAngleA.split(" ")[0]}: ${angleA_deg.toFixed(1)}°`)
+                    .style("font-size", angleFontSize)
+                    .style("fill", isHighlighted('angleA') ? "#d9534f" : "red") 
+                    .style("font-weight", "bold")
+                    .style("opacity", 0).transition().duration(customWidth ? 200:500).delay(customWidth ? 250:700).style("opacity", 1);
+
+                const arcRadius = Math.min((customWidth ? 12 : 25), final_scaled_a / 3, final_scaled_o / 3);
+                if (arcRadius > (customWidth ? 2 : 5)) {
+                    const arcGenerator = d3.arc()
+                        .innerRadius(arcRadius - (customWidth ? 1 : 2))
+                        .outerRadius(arcRadius)
+                        .startAngle(Math.PI)
+                        .endAngle(Math.PI + toRadians(angleA_deg));
+                    group.append("path")
+                        .attr("transform", `translate(${Ax}, ${Ay}) rotate(180)`)
+                        .attr("d", arcGenerator)
+                        .attr("fill", isHighlighted('angleA') ? "rgba(255,0,0,0.5)" : "rgba(255,0,0,0.3)")
                         .style("opacity", 0).transition().duration(customWidth ? 200:500).delay(customWidth ? 300:750).style("opacity", 1);
                 }
             }
+            
             group.append("path")
                 .attr("class", "right-angle-symbol")
-                .attr("d", `M ${Cx + (customWidth ? 5:10)} ${Cy} L ${Cx + (customWidth ? 5:10)} ${Cy - (customWidth ? 5:10)} L ${Cx} ${Cy - (customWidth ? 5:10)}`)
+                .attr("d", `M ${Cx + (customWidth ? 5:10)} ${Cy} L ${Cx + (customWidth ? 5:10)} ${Cy - (customWidth ? 5:10)} L ${Cx} ${Cy - (customWidth ? 5:10)}`) 
                 .style("opacity", 0).transition().duration(customWidth ? 200:500).delay(customWidth ? 250:700).style("opacity", 1);
         }
 
@@ -423,231 +455,232 @@
             toggleExplanationButton.textContent = 'Toon Uitleg';
             updateStreakDisplay();
 
-            let questionCategory; // 0: find side, 1: find angle
-            let mainType; // 0: sin, 1: cos, 2: tan
-            let subType; // For finding side: 0: find O/A, 1: find L. For finding angle, this is not used in the same way.
+            let questionCategory; 
+            let mainType; 
+            let subType; 
 
             if (lastQuestionTypeOnError) {
                 questionCategory = lastQuestionTypeOnError.category;
                 mainType = lastQuestionTypeOnError.mainType;
                 subType = lastQuestionTypeOnError.subType;
-                lastQuestionTypeOnError = null; // Reset after using it
+                lastQuestionTypeOnError = null; 
             } else {
-                questionCategory = Math.random() < 0.75 ? 0 : 1; // 75% chance to find side, 25% to find angle
-                mainType = Math.floor(Math.random() * 3);
-                subType = Math.random() < 0.5 ? 0 : 1;
+                questionCategory = Math.random() < 0.75 ? 0 : 1; 
+                mainType = Math.floor(Math.random() * 3); 
+                subType = Math.random() < 0.5 ? 0 : 1; 
             }
             
             currentQuestionData.category = questionCategory;
             currentQuestionData.mainType = mainType;
             currentQuestionData.subType = subType;
-
-
-            let angleA, knownSideValue, side_l_calc, side_o_calc, side_a_calc, teVindenKey, knownSideKey, knownSideVal;
-            let calculationDescription = "";
             currentQuestionData.isAngleQuestion = (questionCategory === 1);
 
-            if (!currentQuestionData.isAngleQuestion) { // === Vraag om een ZIJDE te berekenen ===
-                answerLabelElement.textContent = "Antwoord (zijde, 1 decimaal):";
-                angleA = Math.floor(Math.random() * 50) + 20; // Hoek A tussen 20 en 69 graden
-                currentQuestionData.angleA = angleA;
-                knownSideValue = parseFloat((Math.random() * 15 + 5).toFixed(1));
+            let angleA_calc, knownSideValue, side_l_calc, side_o_calc, side_a_calc, teVindenKey, knownSideKey, knownSideValForQuestion;
+            let calculationDescription = "";
+            
+            // Deze q_x_draw waarden bepalen welke zijden een waarde krijgen in de vraagdriehoek
+            let q_l_draw = null, q_o_draw = null, q_a_draw = null; 
+            let angle_to_draw_for_question = null;
+            let highlight_key_for_question = null;
 
-                if (mainType === 0) { // Sinus: O/L
-                    if (subType === 0) { // Geef L, vraag O
-                        side_l_calc = knownSideValue; teVindenKey = 'O'; knownSideKey = 'L'; knownSideVal = side_l_calc;
-                        currentQuestionData.correctAnswer = side_l_calc * Math.sin(toRadians(angleA));
+            if (!currentQuestionData.isAngleQuestion) { 
+                answerLabelElement.textContent = "Antwoord (zijde, 1 decimaal):";
+                angleA_calc = Math.floor(Math.random() * 50) + 20; 
+                currentQuestionData.angleA = angleA_calc;
+                angle_to_draw_for_question = angleA_calc; 
+                knownSideValue = parseFloat((Math.random() * 15 + 5).toFixed(1)); 
+
+                if (mainType === 0) { 
+                    if (subType === 0) { 
+                        side_l_calc = knownSideValue; teVindenKey = 'O'; knownSideKey = 'L'; 
+                        q_l_draw = side_l_calc; // Gegeven zijde L krijgt een waarde voor tekenen
+                        currentQuestionData.correctAnswer = side_l_calc * Math.sin(toRadians(angleA_calc));
                         side_o_calc = currentQuestionData.correctAnswer;
-                        side_a_calc = Math.sqrt(Math.max(0.1,side_l_calc**2 - side_o_calc**2));
-                        questionElement.innerText = `Hoek A = ${angleA}°, Langste zijde = ${side_l_calc}. Bereken de zijde tegenover hoek A.`;
+                        side_a_calc = Math.sqrt(Math.max(0.1,side_l_calc**2 - side_o_calc**2)); 
+                        questionElement.innerText = `Hoek A = ${angleA_calc}°, Langste zijde (L) = ${side_l_calc.toFixed(1)}. Bereken de Overstaande zijde (O) van hoek A.`;
                         currentQuestionData.rule = "SOL: sin(A) = O / L  =>  O = L * sin(A)";
-                        calculationDescription = `O = ${side_l_calc.toFixed(1)} * sin(${angleA}°)`;
-                    } else { // Geef O, vraag L
-                        side_o_calc = knownSideValue; teVindenKey = 'L'; knownSideKey = 'O'; knownSideVal = side_o_calc;
-                        currentQuestionData.correctAnswer = side_o_calc / Math.sin(toRadians(angleA));
+                        calculationDescription = `O = ${side_l_calc.toFixed(1)} * sin(${angleA_calc}°)`;
+                    } else { 
+                        side_o_calc = knownSideValue; teVindenKey = 'L'; knownSideKey = 'O'; 
+                        q_o_draw = side_o_calc; // Gegeven zijde O krijgt een waarde voor tekenen
+                        currentQuestionData.correctAnswer = side_o_calc / Math.sin(toRadians(angleA_calc));
                         side_l_calc = currentQuestionData.correctAnswer;
                         side_a_calc = Math.sqrt(Math.max(0.1,side_l_calc**2 - side_o_calc**2));
-                        questionElement.innerText = `Hoek A = ${angleA}°, Zijde tegenover hoek A = ${side_o_calc}. Bereken de langste zijde.`;
+                        questionElement.innerText = `Hoek A = ${angleA_calc}°, Overstaande zijde (O) = ${side_o_calc.toFixed(1)}. Bereken de Langste zijde (L).`;
                         currentQuestionData.rule = "SOL: sin(A) = O / L  =>  L = O / sin(A)";
-                        calculationDescription = `L = ${side_o_calc.toFixed(1)} / sin(${angleA}°)`;
+                        calculationDescription = `L = ${side_o_calc.toFixed(1)} / sin(${angleA_calc}°)`;
                     }
-                } else if (mainType === 1) { // Cosinus: A/L
-                    if (subType === 0) { // Geef L, vraag A
-                        side_l_calc = knownSideValue; teVindenKey = 'A'; knownSideKey = 'L'; knownSideVal = side_l_calc;
-                        currentQuestionData.correctAnswer = side_l_calc * Math.cos(toRadians(angleA));
+                } else if (mainType === 1) { 
+                    if (subType === 0) { 
+                        side_l_calc = knownSideValue; teVindenKey = 'A'; knownSideKey = 'L'; 
+                        q_l_draw = side_l_calc; // Gegeven zijde L
+                        currentQuestionData.correctAnswer = side_l_calc * Math.cos(toRadians(angleA_calc));
                         side_a_calc = currentQuestionData.correctAnswer;
                         side_o_calc = Math.sqrt(Math.max(0.1,side_l_calc**2 - side_a_calc**2));
-                        questionElement.innerText = `Hoek A = ${angleA}°, Langste zijde = ${side_l_calc}. Bereken de aanliggende zijde van hoek A.`;
+                        questionElement.innerText = `Hoek A = ${angleA_calc}°, Langste zijde (L) = ${side_l_calc.toFixed(1)}. Bereken de Aanliggende zijde (A) van hoek A.`;
                         currentQuestionData.rule = "CAL: cos(A) = A / L  =>  A = L * cos(A)";
-                        calculationDescription = `A = ${side_l_calc.toFixed(1)} * cos(${angleA}°)`;
-                    } else { // Geef A, vraag L
-                        side_a_calc = knownSideValue; teVindenKey = 'L'; knownSideKey = 'A'; knownSideVal = side_a_calc;
-                        currentQuestionData.correctAnswer = side_a_calc / Math.cos(toRadians(angleA));
+                        calculationDescription = `A = ${side_l_calc.toFixed(1)} * cos(${angleA_calc}°)`;
+                    } else { 
+                        side_a_calc = knownSideValue; teVindenKey = 'L'; knownSideKey = 'A'; 
+                        q_a_draw = side_a_calc; // Gegeven zijde A
+                        currentQuestionData.correctAnswer = side_a_calc / Math.cos(toRadians(angleA_calc));
                         side_l_calc = currentQuestionData.correctAnswer;
                         side_o_calc = Math.sqrt(Math.max(0.1,side_l_calc**2 - side_a_calc**2));
-                        questionElement.innerText = `Hoek A = ${angleA}°, Aanliggende zijde van hoek A = ${side_a_calc}. Bereken de langste zijde.`;
+                        questionElement.innerText = `Hoek A = ${angleA_calc}°, Aanliggende zijde (A) = ${side_a_calc.toFixed(1)}. Bereken de Langste zijde (L).`;
                         currentQuestionData.rule = "CAL: cos(A) = A / L  =>  L = A / cos(A)";
-                        calculationDescription = `L = ${side_a_calc.toFixed(1)} / cos(${angleA}°)`;
+                        calculationDescription = `L = ${side_a_calc.toFixed(1)} / cos(${angleA_calc}°)`;
                     }
-                } else { // Tangens: O/A
-                    if (subType === 0) { // Geef A, vraag O
-                        side_a_calc = knownSideValue; teVindenKey = 'O'; knownSideKey = 'A'; knownSideVal = side_a_calc;
-                        currentQuestionData.correctAnswer = side_a_calc * Math.tan(toRadians(angleA));
+                } else { 
+                    if (subType === 0) { 
+                        side_a_calc = knownSideValue; teVindenKey = 'O'; knownSideKey = 'A'; 
+                        q_a_draw = side_a_calc; // Gegeven zijde A
+                        currentQuestionData.correctAnswer = side_a_calc * Math.tan(toRadians(angleA_calc));
                         side_o_calc = currentQuestionData.correctAnswer;
-                        side_l_calc = Math.sqrt(side_a_calc**2 + side_o_calc**2); // L is niet direct in TOA, maar nodig voor tekenen
-                        questionElement.innerText = `Hoek A = ${angleA}°, Aanliggende zijde van hoek A = ${side_a_calc}. Bereken de zijde tegenover hoek A.`;
+                        side_l_calc = Math.sqrt(side_a_calc**2 + side_o_calc**2); 
+                        questionElement.innerText = `Hoek A = ${angleA_calc}°, Aanliggende zijde (A) = ${side_a_calc.toFixed(1)}. Bereken de Overstaande zijde (O) van hoek A.`;
                         currentQuestionData.rule = "TOA: tan(A) = O / A  =>  O = A * tan(A)";
-                        calculationDescription = `O = ${side_a_calc.toFixed(1)} * tan(${angleA}°)`;
-                    } else { // Geef O, vraag A
-                        side_o_calc = knownSideValue; teVindenKey = 'A'; knownSideKey = 'O'; knownSideVal = side_o_calc;
-                        currentQuestionData.correctAnswer = side_o_calc / Math.tan(toRadians(angleA));
+                        calculationDescription = `O = ${side_a_calc.toFixed(1)} * tan(${angleA_calc}°)`;
+                    } else { 
+                        side_o_calc = knownSideValue; teVindenKey = 'A'; knownSideKey = 'O'; 
+                        q_o_draw = side_o_calc; // Gegeven zijde O
+                        currentQuestionData.correctAnswer = side_o_calc / Math.tan(toRadians(angleA_calc));
                         side_a_calc = currentQuestionData.correctAnswer;
                         side_l_calc = Math.sqrt(side_a_calc**2 + side_o_calc**2);
-                        questionElement.innerText = `Hoek A = ${angleA}°, Zijde tegenover hoek A = ${side_o_calc}. Bereken de aanliggende zijde van hoek A.`;
+                        questionElement.innerText = `Hoek A = ${angleA_calc}°, Overstaande zijde (O) = ${side_o_calc.toFixed(1)}. Bereken de Aanliggende zijde (A) van hoek A.`;
                         currentQuestionData.rule = "TOA: tan(A) = O / A  =>  A = O / tan(A)";
-                        calculationDescription = `A = ${side_o_calc.toFixed(1)} / tan(${angleA}°)`;
+                        calculationDescription = `A = ${side_o_calc.toFixed(1)} / tan(${angleA_calc}°)`;
                     }
                 }
-            } else { // === Vraag om een HOEK te berekenen ===
+                highlight_key_for_question = teVindenKey; // Alleen de te zoeken zijde wordt gehighlight met '?'
+                knownSideValForQuestion = knownSideValue; // Sla de waarde op voor de uitleg
+            } else { 
                 answerLabelElement.textContent = "Antwoord (hoek in graden, 1 decimaal):";
-                teVindenKey = 'angleA'; // We zoeken altijd hoek A in dit scenario
-                let side1Val = parseFloat((Math.random() * 10 + 5).toFixed(1)); // 5.0 to 14.9
-                let side2Val = parseFloat((Math.random() * 10 + 5).toFixed(1)); // 5.0 to 14.9
+                teVindenKey = 'angleA'; 
+                angle_to_draw_for_question = null; 
 
-                if (mainType === 0) { // Sinus: O/L. L moet groter zijn dan O.
+                let side1Val = parseFloat((Math.random() * 10 + 5).toFixed(1)); 
+                let side2Val = parseFloat((Math.random() * 10 + 5).toFixed(1)); 
+
+                if (mainType === 0) { 
                     side_o_calc = Math.min(side1Val, side2Val);
-                    side_l_calc = Math.max(side1Val, side2Val) + parseFloat((Math.random()*5+1).toFixed(1)); // Zorg dat L > O
+                    side_l_calc = Math.max(side1Val, side2Val) + parseFloat((Math.random()*5+1).toFixed(1)); 
                     side_a_calc = Math.sqrt(Math.max(0.1, side_l_calc**2 - side_o_calc**2));
+                    q_o_draw = side_o_calc; q_l_draw = side_l_calc; // Gegeven zijden O en L
                     currentQuestionData.correctAnswer = toDegrees(Math.asin(side_o_calc / side_l_calc));
-                    knownSideKey = ['O', 'L']; knownSideVal = [side_o_calc, side_l_calc];
-                    questionElement.innerText = `Zijde tegenover hoek A = ${side_o_calc}, Langste zijde = ${side_l_calc}. Bereken hoek A.`;
+                    knownSideKey = ['O', 'L']; knownSideValForQuestion = [side_o_calc, side_l_calc];
+                    questionElement.innerText = `Overstaande zijde (O) = ${side_o_calc.toFixed(1)}, Langste zijde (L) = ${side_l_calc.toFixed(1)}. Bereken hoek A.`;
                     currentQuestionData.rule = "SOL: sin(A) = O / L  =>  A = asin(O / L)";
                     calculationDescription = `A = asin(${side_o_calc.toFixed(1)} / ${side_l_calc.toFixed(1)})`;
-                } else if (mainType === 1) { // Cosinus: A/L. L moet groter zijn dan A.
+                } else if (mainType === 1) { 
                     side_a_calc = Math.min(side1Val, side2Val);
-                    side_l_calc = Math.max(side1Val, side2Val) + parseFloat((Math.random()*5+1).toFixed(1)); // Zorg dat L > A
+                    side_l_calc = Math.max(side1Val, side2Val) + parseFloat((Math.random()*5+1).toFixed(1)); 
                     side_o_calc = Math.sqrt(Math.max(0.1, side_l_calc**2 - side_a_calc**2));
+                    q_a_draw = side_a_calc; q_l_draw = side_l_calc; // Gegeven zijden A en L
                     currentQuestionData.correctAnswer = toDegrees(Math.acos(side_a_calc / side_l_calc));
-                    knownSideKey = ['A', 'L']; knownSideVal = [side_a_calc, side_l_calc];
-                    questionElement.innerText = `Aanliggende zijde van hoek A = ${side_a_calc}, Langste zijde = ${side_l_calc}. Bereken hoek A.`;
+                    knownSideKey = ['A', 'L']; knownSideValForQuestion = [side_a_calc, side_l_calc];
+                    questionElement.innerText = `Aanliggende zijde (A) = ${side_a_calc.toFixed(1)}, Langste zijde (L) = ${side_l_calc.toFixed(1)}. Bereken hoek A.`;
                     currentQuestionData.rule = "CAL: cos(A) = A / L  =>  A = acos(A / L)";
                     calculationDescription = `A = acos(${side_a_calc.toFixed(1)} / ${side_l_calc.toFixed(1)})`;
-                } else { // Tangens: O/A
+                } else { 
                     side_o_calc = side1Val;
                     side_a_calc = side2Val;
                     side_l_calc = Math.sqrt(side_o_calc**2 + side_a_calc**2);
+                    q_o_draw = side_o_calc; q_a_draw = side_a_calc; // Gegeven zijden O en A
                     currentQuestionData.correctAnswer = toDegrees(Math.atan(side_o_calc / side_a_calc));
-                    knownSideKey = ['O', 'A']; knownSideVal = [side_o_calc, side_a_calc];
-                    questionElement.innerText = `Zijde tegenover hoek A = ${side_o_calc}, Aanliggende zijde van hoek A = ${side_a_calc}. Bereken hoek A.`;
+                    knownSideKey = ['O', 'A']; knownSideValForQuestion = [side_o_calc, side_a_calc];
+                    questionElement.innerText = `Overstaande zijde (O) = ${side_o_calc.toFixed(1)}, Aanliggende zijde (A) = ${side_a_calc.toFixed(1)}. Bereken hoek A.`;
                     currentQuestionData.rule = "TOA: tan(A) = O / A  =>  A = atan(O / A)";
                     calculationDescription = `A = atan(${side_o_calc.toFixed(1)} / ${side_a_calc.toFixed(1)})`;
                 }
-                angleA = currentQuestionData.correctAnswer; // De berekende hoek
-                currentQuestionData.angleA = angleA; // Opslaan voor uitleg
+                angleA_calc = currentQuestionData.correctAnswer; 
+                currentQuestionData.angleA = angleA_calc; 
+                highlight_key_for_question = [...knownSideKey, 'angleA']; 
             }
 
             currentQuestionData.calculation = calculationDescription;
             currentQuestionData.teVindenKey = teVindenKey;
-            currentQuestionData.knownSideKey = knownSideKey; // Kan array zijn voor hoekberekening
-            currentQuestionData.knownSideValue = knownSideVal; // Kan array zijn
+            currentQuestionData.knownSideKey = knownSideKey; 
+            currentQuestionData.knownSideValue = knownSideValForQuestion; 
             
             currentQuestionData.full_side_l = side_l_calc;
             currentQuestionData.full_side_o = side_o_calc;
             currentQuestionData.full_side_a = side_a_calc;
 
-            // Voorbereiden van waarden voor de vraagdriehoek (q_l, q_o, q_a)
-            let q_l = null, q_o = null, q_a = null;
-            if (currentQuestionData.isAngleQuestion) {
-                q_l = side_l_calc; q_o = side_o_calc; q_a = side_a_calc;
-                // Hoek A wordt niet getoond in de vraag, dus angleA voor drawTriangleGeneric kan null zijn of de functie moet het negeren
-                drawTriangleGeneric("questionTriangleSvg", null, q_l, q_o, q_a, "A", "L", "O", "A", knownSideKey, null, null, false, true);
-            } else {
-                if (knownSideKey === 'L') {
-                    q_l = currentQuestionData.knownSideValue;
-                    q_o = (teVindenKey === 'O') ? null : currentQuestionData.full_side_o;
-                    q_a = (teVindenKey === 'A') ? null : currentQuestionData.full_side_a;
-                } else if (knownSideKey === 'O') {
-                    q_o = currentQuestionData.knownSideValue;
-                    q_l = (teVindenKey === 'L') ? null : currentQuestionData.full_side_l;
-                    q_a = (teVindenKey === 'A') ? null : currentQuestionData.full_side_a;
-                } else { // knownSideKey === 'A'
-                    q_a = currentQuestionData.knownSideValue;
-                    q_l = (teVindenKey === 'L') ? null : currentQuestionData.full_side_l;
-                    q_o = (teVindenKey === 'O') ? null : currentQuestionData.full_side_o;
-                }
-                if (teVindenKey === 'L') q_l = null;
-                if (teVindenKey === 'O') q_o = null;
-                if (teVindenKey === 'A') q_a = null;
-                drawTriangleGeneric("questionTriangleSvg", angleA, q_l, q_o, q_a, "A", "L", "O", "A", teVindenKey, null, null, false, false);
-            }
+            drawTriangleGeneric("questionTriangleSvg", angle_to_draw_for_question, q_l_draw, q_o_draw, q_a_draw, "A", "L", "O", "A", highlight_key_for_question, null, null, false, currentQuestionData.isAngleQuestion);
         }
 
         function toonUitlegStappen(data) {
             uitlegStappenContainer.innerHTML = ''; 
-            uitlegFoutElement.style.display = 'block'; // Zorg dat de container zichtbaar is
+            uitlegFoutElement.style.display = 'block'; 
 
-            const stepWidth = 200, stepHeight = 150;
+            const stepWidth = 200, stepHeight = 150; 
 
-            // Stap 1: Gegeven situatie
             const stap1Div = d3.select(uitlegStappenContainer).append("div").attr("class", "stap-uitleg");
             stap1Div.append("h5").text("Stap 1: Wat weten we?");
             const svg1 = stap1Div.append("svg").attr("width", stepWidth).attr("height", stepHeight);
             
-            let s1_l_draw = data.full_side_l;
-            let s1_o_draw = data.full_side_o;
-            let s1_a_draw = data.full_side_a;
-            let s1_angle_to_show = data.isAngleQuestion ? null : data.angleA; // Toon hoek alleen als het geen hoekvraag was, of als het de berekende hoek is in stap 3
+            let s1_l_draw = null, s1_o_draw = null, s1_a_draw = null;
+            let s1_angle_to_show = null;
+            let s1_highlight_keys = [];
 
-            drawTriangleGeneric(svg1, s1_angle_to_show, s1_l_draw, s1_o_draw, s1_a_draw, "A", "L", "O", "A", data.knownSideKey, stepWidth, stepHeight, true, data.isAngleQuestion);
+            if (!data.isAngleQuestion) { 
+                s1_angle_to_show = data.angleA;
+                if (data.knownSideKey === 'L') s1_l_draw = (typeof data.knownSideValue === 'number') ? data.knownSideValue : null;
+                else if (data.knownSideKey === 'O') s1_o_draw = (typeof data.knownSideValue === 'number') ? data.knownSideValue : null;
+                else if (data.knownSideKey === 'A') s1_a_draw = (typeof data.knownSideValue === 'number') ? data.knownSideValue : null;
+                s1_highlight_keys = [data.knownSideKey, 'angleA']; 
+            } else { 
+                s1_angle_to_show = null; 
+                if (Array.isArray(data.knownSideKey) && data.knownSideKey.includes('L')) s1_l_draw = data.knownSideValue[data.knownSideKey.indexOf('L')];
+                if (Array.isArray(data.knownSideKey) && data.knownSideKey.includes('O')) s1_o_draw = data.knownSideValue[data.knownSideKey.indexOf('O')];
+                if (Array.isArray(data.knownSideKey) && data.knownSideKey.includes('A')) s1_a_draw = data.knownSideValue[data.knownSideKey.indexOf('A')];
+                s1_highlight_keys = data.knownSideKey; 
+            }
+            if (s1_l_draw === null) s1_l_draw = data.full_side_l;
+            if (s1_o_draw === null) s1_o_draw = data.full_side_o;
+            if (s1_a_draw === null) s1_a_draw = data.full_side_a;
+
+            drawTriangleGeneric(svg1, s1_angle_to_show, s1_l_draw, s1_o_draw, s1_a_draw, "A", "L", "O", "A", s1_highlight_keys, stepWidth, stepHeight, true, data.isAngleQuestion);
+            
             let gegevenText = data.isAngleQuestion ? `Gegeven: ${Array.isArray(data.knownSideKey) ? data.knownSideKey.map((k,i) => `${k === 'L' ? 'Langste' : (k === 'O' ? 'Overstaande' : 'Aanliggende')} = ${data.knownSideValue[i].toFixed(1)}`).join(', ') : ''}.`
-                                                : `Gegeven: Hoek A = ${data.angleA.toFixed(1)}°, ${data.knownSideKey === 'L' ? 'Langste' : (data.knownSideKey === 'O' ? 'Overstaande' : 'Aanliggende')} zijde = ${data.knownSideValue.toFixed(1)}.`;
+                                                 : `Gegeven: Hoek A = ${data.angleA.toFixed(1)}°, ${data.knownSideKey === 'L' ? 'Langste' : (data.knownSideKey === 'O' ? 'Overstaande' : 'Aanliggende')} zijde = ${typeof data.knownSideValue === 'number' ? data.knownSideValue.toFixed(1) : 'N/A'}.`;
             stap1Div.append("p").html(gegevenText);
 
-
-            // Stap 2: Formulekeuze en invullen
             const stap2Div = d3.select(uitlegStappenContainer).append("div").attr("class", "stap-uitleg");
             stap2Div.append("h5").text("Stap 2: Formule kiezen en invullen");
             const svg2 = stap2Div.append("svg").attr("width", stepWidth).attr("height", stepHeight);
-            let highlightFormuleKeys = Array.isArray(data.knownSideKey) ? [...data.knownSideKey] : [data.knownSideKey];
-            if (data.teVindenKey !== 'angleA' && !highlightFormuleKeys.includes(data.teVindenKey)) { // Voeg teVindenKey toe als het een zijde is
-                 highlightFormuleKeys.push(data.teVindenKey);
-            } else if (data.teVindenKey === 'angleA') { // Bij hoek zoeken, highlight de bekende zijden
-                // highlightFormuleKeys is al data.knownSideKey
+            
+            let highlightFormuleKeys = [];
+            if (data.rule.includes("SOL")) highlightFormuleKeys = ['O', 'L'];
+            else if (data.rule.includes("CAL")) highlightFormuleKeys = ['A', 'L'];
+            else if (data.rule.includes("TOA")) highlightFormuleKeys = ['O', 'A'];
+            
+            if (!data.isAngleQuestion) { 
+                highlightFormuleKeys.push('angleA');
+            } else { 
+                 highlightFormuleKeys.push('angleA'); 
             }
 
-
-            // Special handling for TOA to ensure O and A are highlighted if they are the known/unknowns
-            if (data.rule.includes("TOA")) {
-                highlightFormuleKeys = ['O', 'A'];
-            } else if (data.rule.includes("SOL")) {
-                 highlightFormuleKeys = ['O', 'L'];
-            } else if (data.rule.includes("CAL")) {
-                 highlightFormuleKeys = ['A', 'L'];
-            }
-            if (data.teVindenKey === 'angleA') highlightFormuleKeys.push('angleA'); // Highlight de hoek zelf ook
-
-            drawTriangleGeneric(svg2, data.isAngleQuestion ? null : data.angleA, data.full_side_l, data.full_side_o, data.full_side_a, "A", "L", "O", "A", highlightFormuleKeys, stepWidth, stepHeight, true, data.isAngleQuestion);
+            drawTriangleGeneric(svg2, data.angleA, data.full_side_l, data.full_side_o, data.full_side_a, "A", "L", "O", "A", highlightFormuleKeys, stepWidth, stepHeight, true, data.isAngleQuestion);
             let teZoekenText = data.isAngleQuestion ? `Hoek A` : `de ${data.teVindenKey === 'L' ? 'Langste' : (data.teVindenKey === 'O' ? 'Overstaande' : 'Aanliggende')} zijde`;
             stap2Div.append("p").html(`We zoeken ${teZoekenText}.<br>
-                                     Gebruik de regel: ${data.rule.split("=>")[0]}.<br>
-                                     Invullen: ${data.calculation}.`);
+                                      Gebruik de regel: ${data.rule.split("=>")[0]}.<br>
+                                      Invullen: ${data.calculation}.`);
 
-            // Stap 3: Oplossing
             const stap3Div = d3.select(uitlegStappenContainer).append("div").attr("class", "stap-uitleg");
             stap3Div.append("h5").text("Stap 3: De Oplossing");
             const svg3 = stap3Div.append("svg").attr("width", stepWidth).attr("height", stepHeight);
             drawTriangleGeneric(svg3, data.angleA, data.full_side_l, data.full_side_o, data.full_side_a, "A", "L", "O", "A", [data.teVindenKey], stepWidth, stepHeight, true, data.isAngleQuestion);
             let oplossingText = data.isAngleQuestion ? `Hoek A is ongeveer <strong>${data.correctAnswer.toFixed(1)}°</strong>.`
-                                                  : `De ${data.teVindenKey === 'L' ? 'Langste' : (data.teVindenKey === 'O' ? 'Overstaande' : 'Aanliggende')} zijde is ongeveer <strong>${data.correctAnswer.toFixed(1)}</strong>.`;
+                                                 : `De ${data.teVindenKey === 'L' ? 'Langste' : (data.teVindenKey === 'O' ? 'Overstaande' : 'Aanliggende')} zijde is ongeveer <strong>${data.correctAnswer.toFixed(1)}</strong>.`;
             stap3Div.append("p").html(oplossingText);
         }
-
 
         function checkAnswer() {
             const userAnswer = parseFloat(answerElement.value);
             if (isNaN(userAnswer)) {
                 feedbackElement.innerHTML = "<span class='incorrect'>Voer alsjeblieft een getal in.</span>";
-                uitlegStappenContainer.innerHTML = '';
+                uitlegStappenContainer.innerHTML = ''; 
                 uitlegFoutElement.style.display = 'none';
                 return;
             }
@@ -657,11 +690,11 @@
             if (userAnswerRounded === correctAnswerRounded) {
                 feedbackElement.innerHTML = `<span class='correct'>🎉 Goed zo! Het antwoord is (ongeveer) ${correctAnswerRounded}${(currentQuestionData.isAngleQuestion ? '°' : '')}.</span>`;
                 currentStreak++;
-                lastQuestionTypeOnError = null; // Reset bij goed antwoord
+                lastQuestionTypeOnError = null; 
             } else {
                 feedbackElement.innerHTML = `<span class='incorrect'>😥 Helaas, niet correct. Juiste antwoord: ${correctAnswerRounded}${(currentQuestionData.isAngleQuestion ? '°' : '')}. Jouw antwoord: ${userAnswerRounded}${(currentQuestionData.isAngleQuestion ? '°' : '')}.</span>`;
                 currentStreak = 0;
-                lastQuestionTypeOnError = { // Onthoud type vraag
+                lastQuestionTypeOnError = { 
                     category: currentQuestionData.category,
                     mainType: currentQuestionData.mainType,
                     subType: currentQuestionData.subType
@@ -681,7 +714,15 @@
     </script>
     <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$']], displayMath: [['$$','$$']], processEscapes: true, skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }, messageStyle: "none" });
+        MathJax.Hub.Config({ 
+            tex2jax: { 
+                inlineMath: [['$','$']], 
+                displayMath: [['$$','$$']], 
+                processEscapes: true, 
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'] 
+            },
+            messageStyle: "none" 
+        });
     </script>
 </body>
 </html>
