@@ -43,9 +43,19 @@
             --svg-side-label-fill: #007bff;
             --svg-angle-label-fill: red;
             --svg-right-angle-stroke: #555;
-            --svg-arc-fill: rgba(255,0,0,0.2); /* Lichter rood voor arc */
-            --svg-arc-highlight-fill: rgba(255,0,0,0.4); /* Meer dekkend rood voor arc highlight */
             --link-color: #007bff;
+
+            /* Mode specific styles */
+            --mode-bg: #e0e0e0;
+            --mode-border: #a0a0a0;
+            --numpad-bg: #f0f0f0;
+            --numpad-button-bg: #ffffff;
+            --numpad-button-hover-bg: #e0e0e0;
+            --numpad-button-text: #333;
+            --active-input-border: #007bff;
+            --active-input-bg: #e7f5ff;
+            --answer-display-bg: #f0f0f0;
+            --answer-display-border: #ccc;
         }
 
         body.dark-mode {
@@ -85,9 +95,19 @@
             --svg-side-label-fill: #80c7ff;
             --svg-angle-label-fill: #ff8080; /* Lichter rood voor dark mode hoek */
             --svg-right-angle-stroke: #888888;
-            --svg-arc-fill: rgba(255,128,128,0.2);
-            --svg-arc-highlight-fill: rgba(255,128,128,0.4);
             --link-color: #66b2ff;
+
+            /* Mode specific styles - Dark Mode */
+            --mode-bg: #333333;
+            --mode-border: #555555;
+            --numpad-bg: #444444;
+            --numpad-button-bg: #555555;
+            --numpad-button-hover-bg: #666666;
+            --numpad-button-text: #e0e0e0;
+            --active-input-border: #80c7ff;
+            --active-input-bg: #383838;
+            --answer-display-bg: #3e3e3e;
+            --answer-display-border: #666;
         }
 
         body {
@@ -127,7 +147,7 @@
             border-bottom: 1px solid var(--section-border);
             padding-bottom: 5px;
         }
-        .explanation, .quiz, .feedback-section, .selection-menu {
+        .explanation, .quiz-section, .digibord-section {
             margin-bottom: 25px;
             padding: 20px;
             border: 1px solid var(--section-border);
@@ -135,7 +155,7 @@
             background-color: var(--section-bg);
             transition: background-color 0.3s, border-color 0.3s;
         }
-        .triangle-container-wrapper, #triangle-diagram {
+        .triangle-container-wrapper, .diagram-area {
             text-align: center;
             margin-bottom: 15px;
             background-color: var(--diagram-wrapper-bg);
@@ -150,17 +170,6 @@
             display: block;
             margin: 0 auto;
         }
-        input[type="number"] {
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid var(--input-border);
-            background-color: var(--input-bg);
-            color: var(--input-text);
-            border-radius: 6px;
-            font-size: 1rem;
-            width: calc(50% - 15px);
-            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
-        }
         button {
             padding: 12px 20px;
             background-color: var(--button-primary-bg);
@@ -173,12 +182,12 @@
             margin-top: 10px;
         }
         button:hover { background-color: var(--button-primary-hover-bg); }
-        #toggleExplanationButton, #darkModeToggle {
+        #toggleExplanationButton, #darkModeToggle, #toggleQuizMode, #toggleDigibordMode {
             background-color: var(--button-secondary-bg);
             color: var(--button-secondary-text);
             margin-left: 5px;
         }
-        #toggleExplanationButton:hover, #darkModeToggle:hover {
+        #toggleExplanationButton:hover, #darkModeToggle:hover, #toggleQuizMode:hover, #toggleDigibordMode:hover {
             background-color: var(--button-secondary-hover-bg);
         }
 
@@ -194,9 +203,16 @@
             font-size: 1.3em;
         }
 
-        .correct { color: var(--feedback-correct-text); background-color: var(--feedback-correct-bg); border: 1px solid var(--feedback-correct-border); padding: 10px; border-radius: 6px; }
-        .incorrect { color: var(--feedback-incorrect-text); background-color: var(--feedback-incorrect-bg); border: 1px solid var(--feedback-incorrect-border); padding: 10px; border-radius: 6px; }
-        #feedback { margin-top: 15px; font-weight: bold; min-height: 50px; }
+        .feedback-message {
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 50px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .feedback-message.correct { color: var(--feedback-correct-text); background-color: var(--feedback-correct-bg); border: 1px solid var(--feedback-correct-border); }
+        .feedback-message.incorrect { color: var(--feedback-incorrect-text); background-color: var(--feedback-incorrect-bg); border: 1px solid var(--feedback-incorrect-border); }
+        
         .uitleg-extra {
             display: block;
             margin-top:15px;
@@ -216,17 +232,14 @@
         .triangle-side.highlighted-stroke { stroke: var(--svg-highlight-stroke); stroke-width: 2.5px; }
         
         .vertex-label { font-family: 'Inter', sans-serif; fill: var(--svg-vertex-label-fill); font-weight: bold; }
-        /* .vertex-label.highlighted-fill { fill: var(--svg-text-highlight-fill); } */
 
-        .side-label { font-family: 'Inter', sans-serif; fill: var(--svg-side-label-fill); text-anchor: middle; font-size: 12px; }
+        .side-label { font-family: 'Inter', sans-serif; fill: var(--svg-side-label-fill); text-anchor: middle; font-size: 12px; cursor: pointer; }
         .side-label.highlighted-fill { fill: var(--svg-text-highlight-fill); font-weight: bold; }
+        .side-label.active-input { stroke: var(--active-input-border); stroke-width: 1px; fill: var(--active-input-bg); } /* Highlight active input in digibord */
         
-        .angle-label-text { font-family: 'Inter', sans-serif; fill: var(--svg-angle-label-fill); font-weight: normal; font-size: 12px;}
+        .angle-label-text { font-family: 'Inter', sans-serif; fill: var(--svg-angle-label-fill); font-weight: normal; font-size: 12px; cursor: pointer;}
         .angle-label-text.highlighted-fill { fill: var(--svg-text-highlight-fill); font-weight: bold; }
-
-        /* Removed .angle-arc styles as they are no longer drawn */
-        /* .angle-arc { fill: var(--svg-arc-fill); stroke: var(--svg-angle-label-fill); stroke-width: 0.5px;}
-        .angle-arc.highlighted-fill { fill: var(--svg-arc-highlight-fill); stroke: var(--svg-highlight-stroke); stroke-width: 1px;} */
+        .angle-label-text.active-input { stroke: var(--active-input-border); stroke-width: 1px; fill: var(--active-input-bg); } /* Highlight active input in digibord */
 
         .right-angle-symbol { stroke: var(--svg-right-angle-stroke); fill: none; stroke-width: 1.5px;}
 
@@ -249,44 +262,181 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
 
-        .selection-menu h3 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            color: var(--header-color);
-            font-size: 1.2em;
-            text-align: left;
-        }
-        .selection-menu .checkbox-group { 
-            margin-bottom: 10px;
-            display: flex; 
-            align-items: center;
-        }
-        .selection-menu label {
-            margin-left: 8px;
-            font-size: 1em; 
-            color: var(--text-color);
-            cursor: pointer;
-        }
-        .selection-menu input[type="checkbox"] {
-            transform: scale(1.2); 
-            cursor: pointer;
-            margin-right: 5px; 
-        }
-        .button-group {
+        .main-button-group {
             text-align: center;
             margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        .main-button-group button {
+            margin-top: 0; /* Override default button margin */
+        }
+
+        /* Quiz Mode Styles */
+        .quiz-mode-wrapper {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            margin-top: 25px;
+            padding: 20px;
+            border: 1px solid var(--mode-border);
+            border-radius: 8px;
+            background-color: var(--mode-bg);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .quiz-content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .quiz-content-area .diagram-area {
+            width: 100%;
+            max-width: 450px;
+            height: 300px;
+        }
+
+        .quiz-input-area {
+            width: 100%;
+            max-width: 450px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .quiz-input-area #quizAnswerDisplay {
+            min-height: 40px;
+            line-height: 40px;
+            background-color: var(--answer-display-bg);
+            border: 1px solid var(--answer-display-border);
+            border-radius: 6px;
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 0 10px;
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--input-text);
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+        .quiz-input-area .quiz-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .quiz-input-area .quiz-buttons button {
+            flex-grow: 1;
+            max-width: 200px;
+        }
+
+
+        /* Digibord Mode Styles (similar to quiz-mode-wrapper, but for digibord) */
+        .digibord-mode-wrapper {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            margin-top: 25px;
+            padding: 20px;
+            border: 1px solid var(--mode-border);
+            border-radius: 8px;
+            background-color: var(--mode-bg);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .digibord-content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .digibord-content-area .diagram-area {
+            width: 100%;
+            max-width: 450px;
+            height: 300px;
+        }
+        .digibord-content-area .digibord-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 450px;
+        }
+        .digibord-content-area .digibord-buttons button {
+            flex-grow: 1;
+            max-width: 200px;
+        }
+
+
+        /* Numpad Container (global, shown/hidden based on mode) */
+        .numpad-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 180px; /* Fixed width for numpad */
+            background-color: var(--numpad-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+            align-self: flex-start; /* Align to top in flex container */
+        }
+
+        .numpad-container button {
+            width: 100%;
+            padding: 15px 0;
+            font-size: 1.2em;
+            background-color: var(--numpad-button-bg);
+            color: var(--numpad-button-text);
+            border: 1px solid var(--numpad-button-hover-bg);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 0; /* Override default button margin */
+        }
+        .numpad-container button:hover {
+            background-color: var(--numpad-button-hover-bg);
+            transform: translateY(-1px);
+        }
+        .numpad-container button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .numpad-container button.operator {
+            background-color: var(--button-secondary-bg);
+            color: var(--button-secondary-text);
+        }
+        .numpad-container button.operator:hover {
+            background-color: var(--button-secondary-hover-bg);
+        }
+
+        @media (max-width: 768px) {
+            .quiz-mode-wrapper, .digibord-mode-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+            .numpad-container {
+                width: 100%;
+                max-width: 250px; /* Limit numpad width on smaller screens */
+            }
+            .quiz-content-area, .digibord-content-area {
+                width: 100%;
+                min-width: unset;
+            }
+            .quiz-content-area .diagram-area, .digibord-content-area .diagram-area {
+                height: 250px; /* Adjust height for smaller screens */
+            }
         }
 
         @media (max-width: 600px) {
             .container { width: 95%; padding: 15px; }
-            input[type="number"] { width: calc(100% - 20px); margin-bottom: 10px; }
-            button { width: 100%; margin-top: 5px; }
-            #toggleExplanationButton, #darkModeToggle { width: auto; margin: 5px; }
-            .button-group button { width: auto; display: inline-block; margin: 5px; }
+            .main-button-group button { width: auto; display: inline-block; margin: 5px; }
             h1 { font-size: 1.8rem; }
             h2 { font-size: 1.5rem; }
-            .selection-menu h3 { font-size: 1.1em; }
-            .selection-menu label { font-size: 0.9em; }
             .side-label { font-size: 10px; }
             .angle-label-text { font-size: 10px; }
         }
@@ -298,12 +448,13 @@
 </head>
 <body>
     <div class="container">
-        <h1>📐 Sinus, Cosinus, Tangens & Pythagoras Leren</h1>
-        <div class="button-group">
+        <h1>📐 Sinus, Cosinus, Tangens & Pythagoras</h1>
+        <div class="main-button-group">
             <button id="toggleExplanationButton">Toon Uitleg</button>
             <button id="darkModeToggle">🌙 Dark Mode</button>
+            <button id="toggleQuizMode">Quiz Modus</button>
+            <button id="toggleDigibordMode">Digibord Modus</button>
         </div>
-        <div class="streak-counter">Winnende streak: <span id="streakValue">0</span></div>
 
         <div class="explanation" style="display: none;">
             <h2>Uitleg: SOL CAL TOA</h2>
@@ -408,49 +559,100 @@
             </ul>
         </div>
 
-        <div class="selection-menu">
-            <h3>Kies wat je wilt oefenen:</h3>
-            <div class="checkbox-group">
-                <input type="checkbox" id="selectSinSides" name="questionType" value="sinSides" checked>
-                <label for="selectSinSides">Sinus (zijdes berekenen)</label>
+        <div class="quiz-mode-wrapper" id="quizModeWrapper">
+            <div class="quiz-content-area">
+                <div class="selection-menu" id="quizSelectionMenu">
+                    <h3>Kies wat je wilt oefenen:</h3>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="selectSinSides" name="questionType" value="sinSides" checked>
+                        <label for="selectSinSides">Sinus (zijdes berekenen)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="selectCosSides" name="questionType" value="cosSides" checked>
+                        <label for="selectCosSides">Cosinus (zijdes berekenen)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="selectTanSides" name="questionType" value="tanSides" checked>
+                        <label for="selectTanSides">Tangens (zijdes berekenen)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="selectAngles" name="questionType" value="angles" checked>
+                        <label for="selectAngles">Hoeken berekenen (met sin, cos, of tan)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="selectPythagoras" name="questionType" value="pythagoras" checked>
+                        <label for="selectPythagoras">Stelling van Pythagoras</label>
+                    </div>
+                </div>
+
+                <div class="quiz-section">
+                    <h2>🎓 Overhoring: Tijd om te oefenen!</h2>
+                    <p id="question">Klik op "Nieuwe Vraag" om te beginnen.</p>
+                    <div class="diagram-area">
+                         <svg id="questionTriangleSvg" width="300" height="225"></svg>
+                    </div>
+                    <div class="streak-counter">Winnende streak: <span id="streakValue">0</span></div>
+                    <div class="quiz-input-area">
+                        <p id="answerLabel">Antwoord (1 decimaal):</p>
+                        <div id="quizAnswerDisplay"></div>
+                        <div class="quiz-buttons">
+                            <button onclick="checkAnswer()">Controleer Antwoord</button>
+                            <button onclick="newQuestion()">Nieuwe Vraag</button>
+                        </div>
+                    </div>
+                    <div id="feedback" class="feedback-message"></div>
+                    <div id="uitleg-fout" class="uitleg-extra" style="display:none;">
+                        <h4>Uitleg van de oplossing:</h4>
+                        <p>De gebruikte regel was: <strong id="uitleg-fout-regel"></strong></p>
+                        <p>De berekening was: <strong id="uitleg-fout-berekening"></strong></p>
+                        <div id="uitleg-fout-stappen-container" style="margin-top: 15px;">
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="selectCosSides" name="questionType" value="cosSides" checked>
-                <label for="selectCosSides">Cosinus (zijdes berekenen)</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="selectTanSides" name="questionType" value="tanSides" checked>
-                <label for="selectTanSides">Tangens (zijdes berekenen)</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="selectAngles" name="questionType" value="angles" checked>
-                <label for="selectAngles">Hoeken berekenen (met sin, cos, of tan)</label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="selectPythagoras" name="questionType" value="pythagoras" checked>
-                <label for="selectPythagoras">Stelling van Pythagoras</label>
+            <div class="numpad-container" id="quizNumpad">
+                <button onclick="numpadInput('1')">1</button>
+                <button onclick="numpadInput('2')">2</button>
+                <button onclick="numpadInput('3')">3</button>
+                <button onclick="numpadInput('4')">4</button>
+                <button onclick="numpadInput('5')">5</button>
+                <button onclick="numpadInput('6')">6</button>
+                <button onclick="numpadInput('7')">7</button>
+                <button onclick="numpadInput('8')">8</button>
+                <button onclick="numpadInput('9')">9</button>
+                <button onclick="numpadInput('.')">.</button>
+                <button onclick="numpadInput('0')">0</button>
+                <button onclick="numpadInput('backspace')" class="operator">⌫</button>
             </div>
         </div>
 
-        <div class="quiz">
-            <h2>🎓 Overhoring: Tijd om te oefenen!</h2>
-            <p id="question">Klik op "Nieuwe Vraag" om te beginnen.</p>
-            <div id="triangle-diagram">
-                 <svg id="questionTriangleSvg" width="300" height="225"></svg>
-            </div>
-            <div>
-                <label for="answer" id="answerLabel">Antwoord (getal, 1 decimaal): </label>
-                <input type="number" id="answer" step="0.1" placeholder="bv. 7.3">
-            </div>
-            <button onclick="checkAnswer()">Controleer Antwoord</button>
-            <button onclick="newQuestion()">Nieuwe Vraag</button>
-            <div id="feedback" class="feedback-section"></div>
-            <div id="uitleg-fout" class="uitleg-extra" style="display:none;">
-                <h4>Uitleg van de oplossing:</h4>
-                <p>De gebruikte regel was: <strong id="uitleg-fout-regel"></strong></p>
-                <p>De berekening was: <strong id="uitleg-fout-berekening"></strong></p>
-                <div id="uitleg-fout-stappen-container" style="margin-top: 15px;">
+        <div class="digibord-mode-wrapper" id="digibordModeWrapper" style="display: none;">
+            <div class="digibord-content-area">
+                <div class="digibord-section">
+                    <h2>Digibord</h2>
+                    <p id="digibordMessage">Klik op een zijde (L, O, A) of hoek A om een waarde in te voeren.</p>
+                    <div class="diagram-area">
+                        <svg id="digibordTriangleSvg" width="450" height="300"></svg>
+                    </div>
+                    <div class="digibord-buttons">
+                        <button onclick="calculateDigibord()">Bereken</button>
+                        <button onclick="resetDigibord()">Reset</button>
+                    </div>
                 </div>
+            </div>
+            <div class="numpad-container" id="digibordNumpad">
+                <button onclick="numpadInput('1')">1</button>
+                <button onclick="numpadInput('2')">2</button>
+                <button onclick="numpadInput('3')">3</button>
+                <button onclick="numpadInput('4')">4</button>
+                <button onclick="numpadInput('5')">5</button>
+                <button onclick="numpadInput('6')">6</button>
+                <button onclick="numpadInput('7')">7</button>
+                <button onclick="numpadInput('8')">8</button>
+                <button onclick="numpadInput('9')">9</button>
+                <button onclick="numpadInput('.')">.</button>
+                <button onclick="numpadInput('0')">0</button>
+                <button onclick="numpadInput('backspace')" class="operator">⌫</button>
             </div>
         </div>
     </div>
@@ -458,26 +660,42 @@
     <script>
         let currentQuestionData = {};
         let currentStreak = 0;
-        let lastQuestionTypeOnError = null; 
+        let currentMode = 'quiz'; // 'quiz' or 'digibord'
 
+        const explanationDiv = document.querySelector('.explanation');
+        const toggleExplanationButton = document.getElementById('toggleExplanationButton');
+        const darkModeToggleButton = document.getElementById('darkModeToggle');
+
+        const quizModeWrapper = document.getElementById('quizModeWrapper');
+        const digibordModeWrapper = document.getElementById('digibordModeWrapper');
+        const toggleQuizModeButton = document.getElementById('toggleQuizMode');
+        const toggleDigibordModeButton = document.getElementById('toggleDigibordMode');
+
+        // Quiz Mode Elements
         const questionElement = document.getElementById('question');
-        const answerElement = document.getElementById('answer');
+        const quizAnswerDisplay = document.getElementById('quizAnswerDisplay');
         const answerLabelElement = document.getElementById('answerLabel');
         const feedbackElement = document.getElementById('feedback');
         const uitlegFoutElement = document.getElementById('uitleg-fout');
         const uitlegFoutRegel = document.getElementById('uitleg-fout-regel');
         const uitlegFoutBerekening = document.getElementById('uitleg-fout-berekening');
         const uitlegStappenContainer = document.getElementById('uitleg-fout-stappen-container');
-        const explanationDiv = document.querySelector('.explanation');
-        const toggleExplanationButton = document.getElementById('toggleExplanationButton');
-        const darkModeToggleButton = document.getElementById('darkModeToggle');
         const streakValueElement = document.getElementById('streakValue');
+        const quizSelectionMenu = document.getElementById('quizSelectionMenu');
 
-        const selectSinSidesCb = document.getElementById('selectSinSides');
-        const selectCosSidesCb = document.getElementById('selectCosSides');
-        const selectTanSidesCb = document.getElementById('selectTanSides');
-        const selectAnglesCb = document.getElementById('selectAngles');
-        const selectPythagorasCb = document.getElementById('selectPythagoras'); // New Pythagoras checkbox
+        // Digibord Mode Elements
+        const digibordMessageElement = document.getElementById('digibordMessage');
+
+        // Numpad related variables
+        let currentQuizAnswerString = '';
+        let activeDigibordInputKey = null; // 'L', 'O', 'A', 'angleA' for digibord
+        let currentDigibordInputString = '';
+        let digibordValues = {
+            L: null,
+            O: null,
+            A: null,
+            angleA: null
+        };
 
         // Dark Mode Logic
         function applyTheme(theme) {
@@ -503,38 +721,19 @@
             if (explanationDiv.style.display === 'block' && document.getElementById('explanationTriangleSvg').childNodes.length > 0) {
                 drawExplanationTriangle();
             }
-            // Ensure the quiz triangle is redrawn with the correct display config
-            if (document.getElementById('questionTriangleSvg').childNodes.length > 0 && currentQuestionData.full_side_l) {
+            if (currentMode === 'quiz') {
                 redrawCurrentQuestionTriangle();
-            }
-            // Ensure explanation steps triangles are redrawn
-            if (uitlegFoutElement.style.display === 'block' && currentQuestionData.full_side_l) {
-                toonUitlegStappen(currentQuestionData);
+                if (uitlegFoutElement.style.display === 'block' && currentQuestionData.full_side_l) {
+                    toonUitlegStappen(currentQuestionData);
+                }
+            } else { // digibord mode
+                drawDigibordTriangle();
             }
         });
         
         // Initialize theme based on localStorage or preference
         const preferredTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         applyTheme(preferredTheme);
-
-
-        function redrawCurrentQuestionTriangle() {
-            if (!currentQuestionData || Object.keys(currentQuestionData).length === 0 || !currentQuestionData.sidesDisplayConfig) return;
-
-            drawTriangleGeneric(
-                "questionTriangleSvg",
-                currentQuestionData.isAngleQuestion || currentQuestionData.type === 'pythagoras' ? null : currentQuestionData.angleA, // Angle is not relevant for Pythagoras geometry
-                currentQuestionData.full_side_l,
-                currentQuestionData.full_side_o,
-                currentQuestionData.full_side_a,
-                currentQuestionData.angleLabelForDisplay,
-                "L", "O", "A", // baseLabelL, baseLabelO, baseLabelA (these are internal keys, not displayed)
-                currentQuestionData.highlightKey, // highlightKey (kan zijde of 'angleA' zijn)
-                300, 225, // customWidth, customHeight for question SVG
-                currentQuestionData.isAngleQuestion,
-                currentQuestionData.sidesDisplayConfig // Use the dynamic config here
-            );
-        }
 
 
         toggleExplanationButton.addEventListener('click', function() {
@@ -550,6 +749,26 @@
             }
         });
 
+        toggleQuizMode.addEventListener('click', () => switchMode('quiz'));
+        toggleDigibordMode.addEventListener('click', () => switchMode('digibord'));
+
+        function switchMode(mode) {
+            currentMode = mode;
+            if (mode === 'quiz') {
+                quizModeWrapper.style.display = 'flex';
+                digibordModeWrapper.style.display = 'none';
+                newQuestion(); // Start a new quiz question
+            } else { // digibord
+                quizModeWrapper.style.display = 'none';
+                digibordModeWrapper.style.display = 'flex';
+                resetDigibord(); // Reset digibord state
+            }
+            // Ensure MathJax re-renders for the active mode
+            if (window.MathJax) {
+                MathJax.typesetPromise().then(() => {});
+            }
+        }
+
         function updateStreakDisplay() {
             streakValueElement.textContent = currentStreak;
         }
@@ -562,11 +781,8 @@
             const side_a_expl = 10; 
             const side_o_expl = side_a_expl * Math.tan(toRadians(angleA_deg)); 
             const side_l_expl = side_a_expl / Math.cos(toRadians(angleA_deg)); 
-            // Voor de uitlegdriehoek tonen we altijd alle zijden met hun labels en waarden.
             const explanationSidesConfig = {
-                L: 'value', // Toon Langste zijde met waarde
-                O: 'value', // Toon Overstaande zijde met waarde
-                A: 'value'  // Toon Aanliggende zijde met waarde
+                L: 'value', O: 'value', A: 'value', angleA: 'value'
             };
             drawTriangleGeneric(
                 "explanationTriangleSvg", 
@@ -574,26 +790,20 @@
                 side_l_expl, 
                 side_o_expl, 
                 side_a_expl, 
-                `Hoek A (${angleA_deg.toFixed(0)}°)`, // labelAngleA
-                "L", "O", "A", // baseLabelL, O, A (these are internal keys, not displayed)
-                null, // highlightKeys
-                250, 200, // customWidth, customHeight
-                false, // isAngleQuestion
-                explanationSidesConfig, // sidesDisplayConfig
-                true // showAllVertexLabels voor uitleg
+                `Hoek A (${angleA_deg.toFixed(0)}°)`, 
+                null, 250, 200, false, explanationSidesConfig, 'explanation'
             );
         }
 
         function drawTriangleGeneric(
-            svgIdOrSelection, angleA_deg, // De *waarde* van hoek A, of null als onbekend/niet relevant voor geometrie
-            side_l_geom, side_o_geom, side_a_geom, // *Geometrische* lengtes voor tekenen
-            angleALabelText, // De tekst voor het label van hoek A (bv "α = 30°" of "α = ?")
-            baseLabelL, baseLabelO, baseLabelA, // Basis labels: "L", "O", "A" (these are internal keys, not displayed)
-            highlightItemKey = null, // Key van item om te highlighten ('L', 'O', 'A', of 'angleA')
+            svgIdOrSelection, angleA_deg, 
+            side_l_geom, side_o_geom, side_a_geom, 
+            angleALabelText, 
+            highlightItemKey = null, 
             customWidth = null, customHeight = null,
-            isAngleQuestionForArc = false, // Specifiek voor het bepalen of de hoek A arc getekend moet worden
-            sidesDisplayConfig = { L: 'value', O: 'value', A: 'value' }, // Hoe zijdes tonen ('value', 'label', 'hidden')
-            showAllVertexLabels = false // Voor uitlegdriehoek
+            isAngleQuestionForArc = false, 
+            sidesDisplayConfig = { L: 'value', O: 'value', A: 'value', angleA: 'value' }, 
+            mode // 'quiz', 'digibord', 'explanation'
         ) {
             const svg = (typeof svgIdOrSelection === 'string') ? d3.select("#" + svgIdOrSelection) : svgIdOrSelection;
             svg.selectAll("*").remove();
@@ -601,19 +811,16 @@
             const svgWidth = customWidth || parseFloat(svg.attr("width")) || 300;
             const svgHeight = customHeight || parseFloat(svg.attr("height")) || 225;
 
-            // VERHOOGDE PADDING voor meer ruimte aan de randen
             const PADDING = customWidth ? (customWidth < 200 ? 25 : 50) : 50; 
             const availableWidth = svgWidth - 2 * PADDING;
             const availableHeight = svgHeight - 2 * PADDING;
 
             let scale;
-            // Gebruik de geometrische waarden voor scaling. Als een waarde 0 of null is, gebruik een default.
-            const temp_angle_rad_for_scaling = toRadians(angleA_deg !== null && angleA_deg > 0 && angleA_deg < 90 ? angleA_deg : 35); // Default hoek voor scaling als niet gegeven
+            const temp_angle_rad_for_scaling = toRadians(angleA_deg !== null && angleA_deg > 0 && angleA_deg < 90 ? angleA_deg : 35);
 
             let ref_a = side_a_geom;
             let ref_o = side_o_geom;
 
-            // Als zijdes null zijn, bereken ze voor scaling op basis van de andere of default hoek
             if (side_l_geom && side_l_geom > 0) {
                  if (!ref_a || ref_a <= 0) ref_a = side_l_geom * Math.cos(temp_angle_rad_for_scaling);
                  if (!ref_o || ref_o <= 0) ref_o = side_l_geom * Math.sin(temp_angle_rad_for_scaling);
@@ -624,7 +831,6 @@
                  ref_o = ref_a * Math.tan(temp_angle_rad_for_scaling);
             }
             
-            // Fallback als beide nog steeds niet goed zijn, zodat er iets getekend wordt
             if (!ref_a || ref_a <= 0) ref_a = 10;
             if (!ref_o || ref_o <= 0) ref_o = 10 * Math.tan(temp_angle_rad_for_scaling);
 
@@ -632,37 +838,32 @@
             const scaleX = ref_a > 0.1 ? availableWidth / ref_a : availableWidth / 10; 
             const scaleY = ref_o > 0.1 ? availableHeight / ref_o : availableHeight / 10; 
             scale = Math.min(scaleX, scaleY);
-            // Zorg voor een redelijke minimale en maximale schaal.
             scale = Math.max(customWidth ? 2 : 3, Math.min(scale, customWidth ? (customWidth/10) : 25)); 
 
-            // Werkelijke geschaalde waarden voor tekenen, gebaseerd op de geometrische input
-            const actual_angle_rad = toRadians(angleA_deg !== null && angleA_deg > 0 && angleA_deg < 90 ? angleA_deg : 30); // Fallback voor geometrie als angleA_deg null is
+            const actual_angle_rad = toRadians(angleA_deg !== null && angleA_deg > 0 && angleA_deg < 90 ? angleA_deg : 30);
 
-            // Recalculate based on the determined actual_angle_rad and existing sides if any
             let final_side_a_geom = side_a_geom;
             let final_side_o_geom = side_o_geom;
             let final_side_l_geom = side_l_geom;
 
-            // Prioritize given values, then derive if needed
             if (final_side_l_geom === null && final_side_o_geom !== null && final_side_a_geom !== null) {
                 final_side_l_geom = Math.sqrt(final_side_o_geom**2 + final_side_a_geom**2);
             } else if (final_side_o_geom === null && final_side_l_geom !== null && final_side_a_geom !== null) {
                 final_side_o_geom = final_side_l_geom * Math.sin(actual_angle_rad);
             } else if (final_side_a_geom === null && final_side_l_geom !== null && final_side_o_geom !== null) {
                 final_side_a_geom = final_side_l_geom * Math.cos(actual_angle_rad);
-            } else if (final_side_a_geom === null && final_side_o_geom !== null && actual_angle_rad > 0.01 && actual_angle_rad < Math.PI/2 - 0.01) { // Assume angleA_deg and O known
+            } else if (final_side_a_geom === null && final_side_o_geom !== null && actual_angle_rad > 0.01 && actual_angle_rad < Math.PI/2 - 0.01) {
                 final_side_a_geom = final_side_o_geom / Math.tan(actual_angle_rad);
-            } else if (final_side_o_geom === null && final_side_a_geom !== null && actual_angle_rad > 0.01 && actual_angle_rad < Math.PI/2 - 0.01) { // Assume angleA_deg and A known
+            } else if (final_side_o_geom === null && final_side_a_geom !== null && actual_angle_rad > 0.01 && actual_angle_rad < Math.PI/2 - 0.01) {
                 final_side_o_geom = final_side_a_geom * Math.tan(actual_angle_rad);
-            } else if (final_side_l_geom === null && final_side_o_geom !== null && actual_angle_rad > 0.01 && actual_angle_rad < Math.PI/2 - 0.01) { // Assume angleA_deg and O known
+            } else if (final_side_l_geom === null && final_side_o_geom !== null && actual_angle_rad > 0.01 && actual_angle_rad < Math.PI/2 - 0.01) {
                 final_side_l_geom = final_side_o_geom / Math.sin(actual_angle_rad);
-            } else if (final_side_l_geom === null && final_side_a_geom !== null && actual_angle_rad > 0.01 && actual_angle_rad < Math.PI/2 - 0.01) { // Assume angleA_deg and A known
+            } else if (final_side_l_geom === null && final_side_a_geom !== null && actual_angle_rad > 0.01 && actual_angle_rad < Math.PI/2 - 0.01) {
                 final_side_l_geom = final_side_a_geom / Math.cos(actual_angle_rad);
             }
 
-            // Fallback for cases where only angleA_deg is given, or nothing reasonable
             if (final_side_a_geom === null || final_side_a_geom <= 0) {
-                final_side_a_geom = 10; // Default base length for drawing
+                final_side_a_geom = 10;
                 final_side_o_geom = final_side_a_geom * Math.tan(actual_angle_rad);
                 final_side_l_geom = final_side_a_geom / Math.cos(actual_angle_rad);
             } else if (final_side_o_geom === null || final_side_o_geom <= 0) {
@@ -684,7 +885,6 @@
             const By = Cy - final_scaled_o;       // Punt B
             const group = svg.append("g");
 
-            // Define side names based on vertices
             const sideNames = {
                 A: 'AC', // Aanliggende
                 O: 'BC', // Overstaande
@@ -697,7 +897,6 @@
                 { id: 'AB', x1: Ax, y1: Ay, x2: Bx, y2: By, labelKey: sideNames.L, value: final_side_l_geom, key: 'L', name: "Langste", labelPos: {x: (Ax+Bx)/2 + 5, y: (Ay+By)/2 - 5} }
             ];
 
-            // Filter out sides marked as 'hidden' before drawing lines or labels
             const visibleSidesData = rawSidesData.filter(d => sidesDisplayConfig[d.key] !== 'hidden');
 
             // Draw sides
@@ -708,7 +907,13 @@
                 .attr("y1", d => d.y1)
                 .attr("x2", d => d.x2)
                 .attr("y2", d => d.y2)
-                .attr("class", d => `triangle-side ${highlightItemKey === d.key ? 'highlighted-stroke' : ''}`);
+                .attr("class", d => {
+                    let classes = `triangle-side`;
+                    if (mode === 'quiz' && highlightItemKey === d.key) {
+                        classes += ' highlighted-stroke';
+                    }
+                    return classes;
+                });
 
             // Draw side labels
             group.selectAll(".side-label")
@@ -716,17 +921,32 @@
                 .enter().append("text")
                 .attr("x", d => d.labelPos.x)
                 .attr("y", d => d.labelPos.y)
-                .attr("class", d => `side-label ${highlightItemKey === d.key ? 'highlighted-fill' : ''}`)
-                .text(d => {
-                    // Display value if 'value' is specified in sidesDisplayConfig
-                    if (sidesDisplayConfig[d.key] === 'value') {
-                        return `${d.labelKey} = ${d.value.toFixed(1)}`;
-                    } 
-                    // Always display label (vertex name) if not hidden
-                    else if (sidesDisplayConfig[d.key] === 'label') {
-                        return d.labelKey;
+                .attr("class", d => {
+                    let classes = `side-label`;
+                    if (mode === 'quiz') {
+                        if (highlightItemKey === d.key) classes += ' highlighted-fill';
+                    } else if (mode === 'digibord') {
+                        if (activeDigibordInputKey === d.key) classes += ' active-input';
                     }
-                    return ''; // Should not happen due to filter, but as fallback
+                    return classes;
+                })
+                .text(d => {
+                    if (mode === 'quiz' || mode === 'explanation') {
+                        if (sidesDisplayConfig[d.key] === 'value') {
+                            return `${d.labelKey} = ${d.value.toFixed(1)}`;
+                        } else if (sidesDisplayConfig[d.key] === 'label') {
+                            return d.labelKey;
+                        }
+                    } else if (mode === 'digibord') {
+                        const val = digibordValues[d.key];
+                        return val !== null ? `${d.labelKey} = ${val.toFixed(1)}` : `${d.labelKey} (Input)`;
+                    }
+                    return '';
+                })
+                .on("click", function(event, d) {
+                    if (mode === 'digibord') {
+                        setActiveDigibordInput(d.key);
+                    }
                 });
 
             // Vertices labels
@@ -744,49 +964,48 @@
                 .attr("class", "vertex-label")
                 .text(d => d.label);
             
-            // Re-introducing the angle A drawing logic, but WITHOUT the arc path
-            if ((angleA_deg !== null && !isAngleQuestionForArc) || (isAngleQuestionForArc && highlightItemKey !== 'angleA')) {
-                const labelOffsetRadius = 30; // Offset for label from vertex A
-                
-                // Calculate angle for the bisector of angle A
-                const bisectorAngleRad = actual_angle_rad / 2;
+            // Angle A label (text only, no arc)
+            if (sidesDisplayConfig.angleA !== 'hidden') {
+                const labelOffsetRadius = 30;
+                const bisectorAngleRad = toRadians(angleA_deg !== null && angleA_deg > 0 && angleA_deg < 90 ? angleA_deg : 30) / 2;
 
                 const angleData = {
                     x: Ax,
                     y: Ay,
-                    // Position label along the bisector of the angle, slightly outside the vertex
                     labelX: Ax + labelOffsetRadius * Math.cos(bisectorAngleRad),
-                    labelY: Ay - labelOffsetRadius * Math.sin(bisectorAngleRad), // Subtract for SVG y-axis
+                    labelY: Ay - labelOffsetRadius * Math.sin(bisectorAngleRad),
                     labelText: angleALabelText,
                     key: 'angleA'
                 };
 
-                // Removed: group.append("path") for the arc
-                
                 group.append("text")
                     .attr("x", angleData.labelX)
                     .attr("y", angleData.labelY)
-                    .attr("class", `angle-label-text ${highlightItemKey === angleData.key ? 'highlighted-fill' : ''}`)
-                    .text(angleALabelText)
-                    .style("text-anchor", "middle");
-            } else if (isAngleQuestionForArc && highlightItemKey === 'angleA') {
-                 // If angle A is the unknown, draw a question mark
-                const labelOffsetRadius = 30; // Consistent offset for label
-                
-                // Use a default angle for positioning the '?'
-                const defaultAngleRad = toRadians(30); 
-                const bisectorAngleRad = defaultAngleRad / 2;
-
-                group.append("text")
-                    .attr("x", Ax + labelOffsetRadius * Math.cos(bisectorAngleRad))
-                    .attr("y", Ay - labelOffsetRadius * Math.sin(bisectorAngleRad))
-                    .attr("class", `angle-label-text highlighted-fill`) // Highlight the '?'
-                    .text("?")
-                    .style("text-anchor", "middle");
-
-                // Removed: group.append("path") for the arc
+                    .attr("class", d => {
+                        let classes = `angle-label-text`;
+                        if (mode === 'quiz') {
+                            if (highlightItemKey === angleData.key) classes += ' highlighted-fill';
+                        } else if (mode === 'digibord') {
+                            if (activeDigibordInputKey === angleData.key) classes += ' active-input';
+                        }
+                        return classes;
+                    })
+                    .text(() => {
+                        if (mode === 'quiz' || mode === 'explanation') {
+                            return angleALabelText;
+                        } else if (mode === 'digibord') {
+                            const val = digibordValues.angleA;
+                            return val !== null ? `Hoek A = ${val.toFixed(1)}°` : `Hoek A (Input)`;
+                        }
+                        return '';
+                    })
+                    .style("text-anchor", "middle")
+                    .on("click", function() {
+                        if (mode === 'digibord') {
+                            setActiveDigibordInput('angleA');
+                        }
+                    });
             }
-
 
             // Right angle at C
             const rightAngleSize = 10;
@@ -795,15 +1014,69 @@
                 .attr("class", "right-angle-symbol");
         }
 
+        // Numpad Input Logic (shared for both modes)
+        function numpadInput(value) {
+            if (currentMode === 'quiz') {
+                if (value === 'backspace') {
+                    currentQuizAnswerString = currentQuizAnswerString.slice(0, -1);
+                } else if (value === '.') {
+                    if (!currentQuizAnswerString.includes('.')) {
+                        currentQuizAnswerString += value;
+                    }
+                } else {
+                    currentQuizAnswerString += value;
+                }
+                quizAnswerDisplay.textContent = currentQuizAnswerString;
+            } else if (currentMode === 'digibord') {
+                if (!activeDigibordInputKey) {
+                    digibordMessageElement.textContent = "Selecteer eerst een zijde of hoek om in te voeren.";
+                    return;
+                }
+
+                if (value === 'backspace') {
+                    currentDigibordInputString = currentDigibordInputString.slice(0, -1);
+                } else if (value === '.') {
+                    if (!currentDigibordInputString.includes('.')) {
+                        currentDigibordInputString += value;
+                    }
+                } else {
+                    currentDigibordInputString += value;
+                }
+                
+                digibordMessageElement.textContent = `Voer waarde in voor ${activeDigibordInputKey}: ${currentDigibordInputString}`;
+                digibordValues[activeDigibordInputKey] = parseFloat(currentDigibordInputString) || null;
+                drawDigibordTriangle(); // Redraw to show updated value
+            }
+        }
+
+        // Quiz Mode Functions
+        function redrawCurrentQuestionTriangle() {
+            if (!currentQuestionData || Object.keys(currentQuestionData).length === 0 || !currentQuestionData.sidesDisplayConfig) return;
+
+            drawTriangleGeneric(
+                "questionTriangleSvg",
+                currentQuestionData.isAngleQuestion || currentQuestionData.type === 'pythagoras' ? null : currentQuestionData.angleA,
+                currentQuestionData.full_side_l,
+                currentQuestionData.full_side_o,
+                currentQuestionData.full_side_a,
+                currentQuestionData.angleLabelForDisplay,
+                currentQuestionData.highlightKey,
+                300, 225,
+                currentQuestionData.isAngleQuestion,
+                currentQuestionData.sidesDisplayConfig,
+                'quiz'
+            );
+        }
+
         function generateQuestion() {
             const selectedTypes = Array.from(document.querySelectorAll('.selection-menu input[name="questionType"]:checked')).map(cb => cb.value);
             if (selectedTypes.length === 0) {
                 questionElement.innerHTML = "Selecteer minimaal één type vraag om te beginnen.";
-                answerElement.value = "";
-                feedbackElement.className = 'feedback-section';
+                quizAnswerDisplay.textContent = "";
+                feedbackElement.className = 'feedback-message';
                 feedbackElement.textContent = "";
                 uitlegFoutElement.style.display = 'none';
-                drawTriangleGeneric("questionTriangleSvg", null, null, null, null, "", "L", "O", "A", null, 300, 225, false, { L: 'label', O: 'label', A: 'label' });
+                drawTriangleGeneric("questionTriangleSvg", null, null, null, null, "", null, 300, 225, false, { L: 'label', O: 'label', A: 'label', angleA: 'label' }, 'quiz');
                 return;
             }
 
@@ -812,7 +1085,7 @@
             let questionText = "";
             let correctAnswer;
             let highlightKey = null;
-            let sidesDisplayConfig = { L: 'label', O: 'label', A: 'label' }; // Default, will be overridden
+            let sidesDisplayConfig = { L: 'label', O: 'label', A: 'label', angleA: 'label' };
             let angleLabelText = `Hoek A = ?`;
             let isAngleQuestion = false;
 
@@ -821,14 +1094,10 @@
             const minSide = 5;
             const maxSide = 20;
 
-            // Define side names based on vertices for question text and diagram
             const sideNames = {
-                A: 'AC', // Aanliggende
-                O: 'BC', // Overstaande
-                L: 'AB'  // Langste
+                A: 'AC', O: 'BC', L: 'AB'
             };
 
-            // Generate robust random numbers for triangle sides/angles
             if (questionType !== 'pythagoras') {
                 angleA = Math.random() * (maxAngle - minAngle) + minAngle;
                 angleA = parseFloat(angleA.toFixed(1)); 
@@ -841,153 +1110,113 @@
                 if (sideO < minSide || sideL < minSide || sideO > maxSide * 2 || sideL > maxSide * 2 || isNaN(sideO) || isNaN(sideL)) {
                     return generateQuestion();
                 }
-            } else { // Pythagoras questions
+            } else {
                 const pythSides = [
-                    { O: 3, A: 4, L: 5 },
-                    { O: 6, A: 8, L: 10 },
-                    { O: 5, A: 12, L: 13 },
-                    { O: 8, A: 15, L: 17 },
-                    { O: 7, A: 24, L: 25 }
+                    { O: 3, A: 4, L: 5 }, { O: 6, A: 8, L: 10 }, { O: 5, A: 12, L: 13 },
+                    { O: 8, A: 15, L: 17 }, { O: 7, A: 24, L: 25 }
                 ];
                 const chosenPythSet = pythSides[Math.floor(Math.random() * pythSides.length)];
-                sideO = chosenPythSet.O;
-                sideA = chosenPythSet.A;
-                sideL = chosenPythSet.L;
+                sideO = chosenPythSet.O; sideA = chosenPythSet.A; sideL = chosenPythSet.L;
                 angleA = toDegrees(Math.atan(sideO / sideA)); 
             }
 
-
-            let known1, known2, unknown;
             let formulaText = "";
-            let calculationSteps = [];
             let solveMethod = "";
-
 
             switch (questionType) {
                 case 'sinSides':
                     angleLabelText = `Hoek A = ${angleA}°`;
-                    if (Math.random() < 0.5) { // Calculate O (side BC)
-                        unknown = 'O';
-                        correctAnswer = sideO;
+                    if (Math.random() < 0.5) { 
+                        unknown = 'O'; correctAnswer = sideO;
                         questionText = `Gegeven Hoek A = ${angleA}° en zijde ${sideNames.L} = ${sideL} cm.<br>Bereken <b>zijde ${sideNames.O}</b>.`;
                         formulaText = `$$\\sin(\\text{Hoek A}) = \\frac{\\text{O}}{\\text{L}}$$`;
                         solveMethod = `$$O = L \\times \\sin(\\text{Hoek A})$$`;
-                        sidesDisplayConfig = { L: 'value', O: 'label', A: 'label' }; // L known, O unknown, A also shown
-                        highlightKey = 'O';
-                    } else { // Calculate L (side AB)
-                        unknown = 'L';
-                        correctAnswer = sideL;
+                        sidesDisplayConfig = { L: 'value', O: 'label', A: 'label', angleA: 'value' }; highlightKey = 'O';
+                    } else { 
+                        unknown = 'L'; correctAnswer = sideL;
                         questionText = `Gegeven Hoek A = ${angleA}° en zijde ${sideNames.O} = ${sideO} cm.<br>Bereken <b>zijde ${sideNames.L}</b>.`;
                         formulaText = `$$\\sin(\\text{Hoek A}) = \\frac{\\text{O}}{\\text{L}}$$`;
                         solveMethod = `$$L = \\frac{\\text{O}}{\\sin(\\text{Hoek A})}$$`;
-                        sidesDisplayConfig = { L: 'label', O: 'value', A: 'label' }; // O known, L unknown, A also shown
-                        highlightKey = 'L';
+                        sidesDisplayConfig = { L: 'label', O: 'value', A: 'label', angleA: 'value' }; highlightKey = 'L';
                     }
                     break;
-
                 case 'cosSides':
                     angleLabelText = `Hoek A = ${angleA}°`;
-                    if (Math.random() < 0.5) { // Calculate A (side AC)
-                        unknown = 'A';
-                        correctAnswer = sideA;
+                    if (Math.random() < 0.5) { 
+                        unknown = 'A'; correctAnswer = sideA;
                         questionText = `Gegeven Hoek A = ${angleA}° en zijde ${sideNames.L} = ${sideL} cm.<br>Bereken <b>zijde ${sideNames.A}</b>.`;
                         formulaText = `$$\\cos(\\text{Hoek A}) = \\frac{\\text{A}}{\\text{L}}$$`;
                         solveMethod = `$$A = L \\times \\cos(\\text{Hoek A})$$`;
-                        sidesDisplayConfig = { L: 'value', O: 'label', A: 'label' }; // L known, A unknown, O also shown
-                        highlightKey = 'A';
-                    } else { // Calculate L (side AB)
-                        unknown = 'L';
-                        correctAnswer = sideL;
+                        sidesDisplayConfig = { L: 'value', O: 'label', A: 'label', angleA: 'value' }; highlightKey = 'A';
+                    } else { 
+                        unknown = 'L'; correctAnswer = sideL;
                         questionText = `Gegeven Hoek A = ${angleA}° en zijde ${sideNames.A} = ${sideA} cm.<br>Bereken <b>zijde ${sideNames.L}</b>.`;
                         formulaText = `$$\\cos(\\text{Hoek A}) = \\frac{\\text{A}}{\\text{L}}$$`;
                         solveMethod = `$$L = \\frac{\\text{A}}{\\cos(\\text{Hoek A})}$$`;
-                        sidesDisplayConfig = { L: 'label', O: 'label', A: 'value' }; // A known, L unknown, O also shown
-                        highlightKey = 'L';
+                        sidesDisplayConfig = { L: 'label', O: 'label', A: 'value', angleA: 'value' }; highlightKey = 'L';
                     }
                     break;
-
                 case 'tanSides':
                     angleLabelText = `Hoek A = ${angleA}°`;
-                    if (Math.random() < 0.5) { // Calculate O (side BC)
-                        unknown = 'O';
-                        correctAnswer = sideO;
+                    if (Math.random() < 0.5) { 
+                        unknown = 'O'; correctAnswer = sideO;
                         questionText = `Gegeven Hoek A = ${angleA}° en zijde ${sideNames.A} = ${sideA} cm.<br>Bereken <b>zijde ${sideNames.O}</b>.`;
                         formulaText = `$$\\tan(\\text{Hoek A}) = \\frac{\\text{O}}{\\text{A}}$$`;
                         solveMethod = `$$O = A \\times \\tan(\\text{Hoek A})$$`;
-                        sidesDisplayConfig = { L: 'label', O: 'label', A: 'value' }; // A known, O unknown, L also shown
-                        highlightKey = 'O';
-                    } else { // Calculate A (side AC)
-                        unknown = 'A';
-                        correctAnswer = sideA;
+                        sidesDisplayConfig = { L: 'label', O: 'label', A: 'value', angleA: 'value' }; highlightKey = 'O';
+                    } else { 
+                        unknown = 'A'; correctAnswer = sideA;
                         questionText = `Gegeven Hoek A = ${angleA}° en zijde ${sideNames.O} = ${sideO} cm.<br>Bereken <b>zijde ${sideNames.A}</b>.`;
                         formulaText = `$$\\tan(\\text{Hoek A}) = \\frac{\\text{O}}{\\text{A}}$$`;
                         solveMethod = `$$A = \\frac{\\text{O}}{\\tan(\\text{Hoek A})}$$`;
-                        sidesDisplayConfig = { L: 'label', O: 'value', A: 'label' }; // O known, A unknown, L also shown
-                        highlightKey = 'A';
+                        sidesDisplayConfig = { L: 'label', O: 'value', A: 'label', angleA: 'value' }; highlightKey = 'A';
                     }
                     break;
-
                 case 'angles':
                     isAngleQuestion = true;
-                    angleLabelText = `Hoek A = ?`; // Angle is unknown
-                    const angleChoice = Math.floor(Math.random() * 3); // 0: Sin, 1: Cos, 2: Tan
-
-                    if (angleChoice === 0) { // Calculate angle A using Sine (O and L known)
-                        unknown = 'angleA';
-                        correctAnswer = angleA;
+                    angleLabelText = `Hoek A = ?`;
+                    const angleChoice = Math.floor(Math.random() * 3);
+                    if (angleChoice === 0) { 
+                        unknown = 'angleA'; correctAnswer = angleA;
                         questionText = `Gegeven zijde ${sideNames.O} = ${sideO} cm en zijde ${sideNames.L} = ${sideL} cm.<br>Bereken <b>Hoek A</b>.`;
                         formulaText = `$$\\sin(\\text{Hoek A}) = \\frac{\\text{O}}{\\text{L}}$$`;
                         solveMethod = `$$\\text{Hoek A} = \\sin^{-1}\\left(\\frac{\\text{O}}{\\text{L}}\\right)$$`;
-                        sidesDisplayConfig = { L: 'value', O: 'value', A: 'label' }; // O and L known, A also shown
-                        highlightKey = 'angleA';
-                    } else if (angleChoice === 1) { // Calculate angle A using Cosine (A and L known)
-                        unknown = 'angleA';
-                        correctAnswer = angleA;
+                        sidesDisplayConfig = { L: 'value', O: 'value', A: 'label', angleA: 'label' }; highlightKey = 'angleA';
+                    } else if (angleChoice === 1) { 
+                        unknown = 'angleA'; correctAnswer = angleA;
                         questionText = `Gegeven zijde ${sideNames.A} = ${sideA} cm en zijde ${sideNames.L} = ${sideL} cm.<br>Bereken <b>Hoek A</b>.`;
                         formulaText = `$$\\cos(\\text{Hoek A}) = \\frac{\\text{A}}{\\text{L}}$$`;
                         solveMethod = `$$\\text{Hoek A} = \\cos^{-1}\\left(\\frac{\\text{A}}{\\text{L}}\\right)$$`;
-                        sidesDisplayConfig = { L: 'value', O: 'label', A: 'value' }; // A and L known, O also shown
-                        highlightKey = 'angleA';
-                    } else { // Calculate angle A using Tangent (O and A known)
-                        unknown = 'angleA';
-                        correctAnswer = angleA;
+                        sidesDisplayConfig = { L: 'value', O: 'label', A: 'value', angleA: 'label' }; highlightKey = 'angleA';
+                    } else { 
+                        unknown = 'angleA'; correctAnswer = angleA;
                         questionText = `Gegeven zijde ${sideNames.O} = ${sideO} cm en zijde ${sideNames.A} = ${sideA} cm.<br>Bereken <b>Hoek A</b>.`;
                         formulaText = `$$\\tan(\\text{Hoek A}) = \\frac{\\text{O}}{\\text{A}}$$`;
                         solveMethod = `$$\\text{Hoek A} = \\tan^{-1}\\left(\\frac{\\text{O}}{\\text{A}}\\right)$$`;
-                        sidesDisplayConfig = { L: 'label', O: 'value', A: 'value' }; // O and A known, L also shown
-                        highlightKey = 'angleA';
+                        sidesDisplayConfig = { L: 'label', O: 'value', A: 'value', angleA: 'label' }; highlightKey = 'angleA';
                     }
                     break;
-                
                 case 'pythagoras':
-                    isAngleQuestion = false; // Pythagoras questions don't involve angles in the calculation
-                    angleLabelText = ''; // No angle label for Pythagoras questions
+                    isAngleQuestion = false; angleLabelText = '';
                     const unknownPythSide = ['O', 'A', 'L'][Math.floor(Math.random() * 3)];
-
                     if (unknownPythSide === 'L') {
-                        unknown = 'L';
-                        correctAnswer = sideL;
+                        unknown = 'L'; correctAnswer = sideL;
                         questionText = `Gegeven zijde ${sideNames.O} = ${sideO} cm en zijde ${sideNames.A} = ${sideA} cm.<br>Bereken <b>zijde ${sideNames.L}</b> met Pythagoras.`;
                         formulaText = `$$O^2 + A^2 = L^2$$`;
                         solveMethod = `$$L = \\sqrt{O^2 + A^2}$$`;
-                        sidesDisplayConfig = { L: 'label', O: 'value', A: 'value' }; // O and A known, L unknown
-                        highlightKey = 'L';
+                        sidesDisplayConfig = { L: 'label', O: 'value', A: 'value', angleA: 'hidden' }; highlightKey = 'L';
                     } else if (unknownPythSide === 'O') {
-                        unknown = 'O';
-                        correctAnswer = sideO;
+                        unknown = 'O'; correctAnswer = sideO;
                         questionText = `Gegeven zijde ${sideNames.L} = ${sideL} cm en zijde ${sideNames.A} = ${sideA} cm.<br>Bereken <b>zijde ${sideNames.O}</b> met Pythagoras.`;
                         formulaText = `$$O^2 + A^2 = L^2$$`;
                         solveMethod = `$$O = \\sqrt{L^2 - A^2}$$`;
-                        sidesDisplayConfig = { L: 'value', O: 'label', A: 'value' }; // L and A known, O unknown
-                        highlightKey = 'O';
-                    } else { // unknownPythSide === 'A'
-                        unknown = 'A';
-                        correctAnswer = sideA;
+                        sidesDisplayConfig = { L: 'value', O: 'label', A: 'value', angleA: 'hidden' }; highlightKey = 'O';
+                    } else { 
+                        unknown = 'A'; correctAnswer = sideA;
                         questionText = `Gegeven zijde ${sideNames.L} = ${sideL} cm en zijde ${sideNames.O} = ${sideO} cm.<br>Bereken <b>zijde ${sideNames.A}</b> met Pythagoras.`;
                         formulaText = `$$O^2 + A^2 = L^2$$`;
                         solveMethod = `$$A = \\sqrt{L^2 - O^2}$$`;
-                        sidesDisplayConfig = { L: 'value', O: 'value', A: 'label' }; // L and O known, A unknown
-                        highlightKey = 'A';
+                        sidesDisplayConfig = { L: 'value', O: 'value', A: 'label', angleA: 'hidden' }; highlightKey = 'A';
                     }
                     break;
                 default:
@@ -996,50 +1225,26 @@
             }
             
             currentQuestionData = {
-                type: questionType,
-                angleA: angleA,
-                sideA: sideA,
-                sideO: sideO,
-                sideL: sideL,
-                full_side_a: sideA, // Store full calculated sides for drawing and explanation
-                full_side_o: sideO,
-                full_side_l: sideL,
+                type: questionType, angleA: angleA, sideA: sideA, sideO: sideO, sideL: sideL,
+                full_side_a: sideA, full_side_o: sideO, full_side_l: sideL,
                 correctAnswer: parseFloat(correctAnswer.toFixed(1)),
-                questionText: questionText,
-                unknown: unknown,
-                formulaText: formulaText,
-                solveMethod: solveMethod,
-                calculationSteps: [], // Initialize empty, populate below
-                highlightKey: highlightKey,
-                sidesDisplayConfig: sidesDisplayConfig, // Use the dynamically set config for the main question
-                angleLabelForDisplay: angleLabelText,
-                isAngleQuestion: isAngleQuestion,
-                sideNames: sideNames // Pass sideNames to be used in explanation steps
+                questionText: questionText, unknown: unknown, formulaText: formulaText,
+                solveMethod: solveMethod, calculationSteps: [], highlightKey: highlightKey,
+                sidesDisplayConfig: sidesDisplayConfig, angleLabelForDisplay: angleLabelText,
+                isAngleQuestion: isAngleQuestion, sideNames: sideNames
             };
 
-            // Populate calculationSteps based on the chosen question type and unknown side
-            // This ensures the explanation steps have the correct side display logic
             if (questionType === 'sinSides' || questionType === 'cosSides' || questionType === 'tanSides') {
                 currentQuestionData.calculationSteps.push({
-                    diagramType: 'questionTriangleSvg',
-                    angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
-                    angleLabelForDisplay: angleLabelText,
-                    highlightKey: (unknown === 'O' || unknown === 'L') ? 'L' : ((unknown === 'A' || unknown === 'L') ? 'A' : 'O'), // Highlight a known side
-                    isAngleQuestion: false,
-                    sidesDisplayConfig: { // Show known angle and one known side
-                        L: (unknown === 'L' || unknown === 'O') ? 'value' : 'label', 
-                        O: (unknown === 'O' || unknown === 'L') ? 'label' : 'value',
-                        A: (unknown === 'A' || unknown === 'L') ? 'value' : 'label'
-                    },
+                    diagramType: 'questionTriangleSvg', angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
+                    angleLabelForDisplay: angleLabelText, highlightKey: (unknown === 'O' || unknown === 'L') ? 'L' : ((unknown === 'A' || unknown === 'L') ? 'A' : 'O'),
+                    isAngleQuestion: false, sidesDisplayConfig: { L: (unknown === 'L' || unknown === 'O') ? 'value' : 'label', O: (unknown === 'O' || unknown === 'L') ? 'label' : 'value', A: (unknown === 'A' || unknown === 'L') ? 'value' : 'label', angleA: 'value' },
                     stepText: `We kennen Hoek A = ${angleA}° en zijde ${sideNames[Object.keys(currentQuestionData.sidesDisplayConfig).find(k => currentQuestionData.sidesDisplayConfig[k] === 'value')] || ''} = ${currentQuestionData[`full_side_${Object.keys(currentQuestionData.sidesDisplayConfig).find(k => currentQuestionData.sidesDisplayConfig[k] === 'value')}`]} cm. We zoeken zijde ${sideNames[unknown]}.`
                 });
                 currentQuestionData.calculationSteps.push({
-                    diagramType: 'questionTriangleSvg',
-                    angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
-                    angleLabelForDisplay: angleLabelText,
-                    highlightKey: unknown, // Highlight the unknown side
-                    isAngleQuestion: false,
-                    sidesDisplayConfig: sidesDisplayConfig, // Show known values and unknown label
+                    diagramType: 'questionTriangleSvg', angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
+                    angleLabelForDisplay: angleLabelText, highlightKey: unknown, isAngleQuestion: false,
+                    sidesDisplayConfig: sidesDisplayConfig,
                     stepText: `De formule is ${formulaText}. Om ${sideNames[unknown]} te vinden, herschikken we naar ${solveMethod}.`
                 });
             } else if (questionType === 'angles') {
@@ -1047,127 +1252,90 @@
                 const knownSide2Key = Object.keys(sidesDisplayConfig).filter(k => sidesDisplayConfig[k] === 'value')[1];
 
                 currentQuestionData.calculationSteps.push({
-                    diagramType: 'questionTriangleSvg',
-                    angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
-                    angleLabelForDisplay: angleLabelText,
-                    highlightKey: knownSide1Key, // Highlight one of the known sides
-                    isAngleQuestion: true,
-                    sidesDisplayConfig: { // Show both known sides
-                        L: sidesDisplayConfig['L'],
-                        O: sidesDisplayConfig['O'],
-                        A: sidesDisplayConfig['A']
-                    },
+                    diagramType: 'questionTriangleSvg', angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
+                    angleLabelForDisplay: angleLabelText, highlightKey: knownSide1Key, isAngleQuestion: true,
+                    sidesDisplayConfig: { L: sidesDisplayConfig['L'], O: sidesDisplayConfig['O'], A: sidesDisplayConfig['A'], angleA: 'label' },
                     stepText: `We kennen zijde ${sideNames[knownSide1Key]} = ${currentQuestionData[`full_side_${knownSide1Key}`]} cm en zijde ${sideNames[knownSide2Key]} = ${currentQuestionData[`full_side_${knownSide2Key}`]} cm. We zoeken Hoek A.`
                 });
                 currentQuestionData.calculationSteps.push({
-                    diagramType: 'questionTriangleSvg',
-                    angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
-                    angleLabelForDisplay: angleLabelText,
-                    highlightKey: 'angleA', // Highlight the unknown angle
-                    isAngleQuestion: true,
-                    sidesDisplayConfig: sidesDisplayConfig, // Show known values and unknown label
+                    diagramType: 'questionTriangleSvg', angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
+                    angleLabelForDisplay: angleLabelText, highlightKey: 'angleA', isAngleQuestion: true,
+                    sidesDisplayConfig: sidesDisplayConfig,
                     stepText: `De formule is ${formulaText}. Om Hoek A te vinden, gebruiken we de inverse functie: ${solveMethod}.`
                 });
             } else if (questionType === 'pythagoras') {
-                let knownSide1 = '';
-                let knownSide2 = '';
-                if (unknown === 'L') {
-                    knownSide1 = 'O';
-                    knownSide2 = 'A';
-                } else if (unknown === 'O') {
-                    knownSide1 = 'L';
-                    knownSide2 = 'A';
-                } else { // unknown === 'A'
-                    knownSide1 = 'L';
-                    knownSide2 = 'O';
-                }
+                let knownSide1 = ''; let knownSide2 = '';
+                if (unknown === 'L') { knownSide1 = 'O'; knownSide2 = 'A'; }
+                else if (unknown === 'O') { knownSide1 = 'L'; knownSide2 = 'A'; }
+                else { knownSide1 = 'L'; knownSide2 = 'O'; }
 
                 currentQuestionData.calculationSteps.push({
-                    diagramType: 'questionTriangleSvg',
-                    angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
-                    angleLabelForDisplay: angleLabelText,
-                    highlightKey: knownSide1, isAngleQuestion: false,
-                    sidesDisplayConfig: { // Show first known side
-                        L: knownSide1 === 'L' ? 'value' : 'label',
-                        O: knownSide1 === 'O' ? 'value' : 'label',
-                        A: knownSide1 === 'A' ? 'value' : 'label'
-                    },
+                    diagramType: 'questionTriangleSvg', angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
+                    angleLabelForDisplay: angleLabelText, highlightKey: knownSide1, isAngleQuestion: false,
+                    sidesDisplayConfig: { L: knownSide1 === 'L' ? 'value' : 'label', O: knownSide1 === 'O' ? 'value' : 'label', A: knownSide1 === 'A' ? 'value' : 'label', angleA: 'hidden' },
                     stepText: `We kennen zijde ${sideNames[knownSide1]} = ${currentQuestionData[`full_side_${knownSide1}`]} cm. We zoeken zijde ${sideNames[unknown]}.`
                 });
-                 currentQuestionData.calculationSteps.push({
-                    diagramType: 'questionTriangleSvg',
-                    angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
-                    angleLabelForDisplay: angleLabelText,
-                    highlightKey: knownSide2, isAngleQuestion: false,
-                    sidesDisplayConfig: { // Show both known sides
-                        L: (knownSide1 === 'L' || knownSide2 === 'L') ? 'value' : 'label',
-                        O: (knownSide1 === 'O' || knownSide2 === 'O') ? 'value' : 'label',
-                        A: (knownSide1 === 'A' || knownSide2 === 'A') ? 'value' : 'label'
-                    },
+                currentQuestionData.calculationSteps.push({
+                    diagramType: 'questionTriangleSvg', angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
+                    angleLabelForDisplay: angleLabelText, highlightKey: knownSide2, isAngleQuestion: false,
+                    sidesDisplayConfig: { L: (knownSide1 === 'L' || knownSide2 === 'L') ? 'value' : 'label', O: (knownSide1 === 'O' || knownSide2 === 'O') ? 'value' : 'label', A: (knownSide1 === 'A' || knownSide2 === 'A') ? 'value' : 'label', angleA: 'hidden' },
                     stepText: `We kennen ook zijde ${sideNames[knownSide2]} = ${currentQuestionData[`full_side_${knownSide2}`]} cm. De stelling van Pythagoras is $O^2 + A^2 = L^2$.`
                 });
                 currentQuestionData.calculationSteps.push({
-                    diagramType: 'questionTriangleSvg',
-                    angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
-                    angleLabelForDisplay: angleLabelText,
-                    highlightKey: unknown, isAngleQuestion: false,
-                    sidesDisplayConfig: sidesDisplayConfig, // Show known values and unknown label
+                    diagramType: 'questionTriangleSvg', angleA: angleA, full_side_l: sideL, full_side_o: sideO, full_side_a: sideA,
+                    angleLabelForDisplay: angleLabelText, highlightKey: unknown, isAngleQuestion: false,
+                    sidesDisplayConfig: sidesDisplayConfig,
                     stepText: `Om ${sideNames[unknown]} te vinden, herschikken we naar ${solveMethod}.`
                 });
             }
 
-
             questionElement.innerHTML = currentQuestionData.questionText;
-            answerLabelElement.textContent = `Antwoord (${unknown === 'angleA' ? 'graden' : 'cm'}, 1 decimaal): `;
-            answerElement.value = "";
-            feedbackElement.className = 'feedback-section';
+            answerLabelElement.textContent = `Antwoord (${currentQuestionData.unknown === 'angleA' ? 'graden' : 'cm'}, 1 decimaal):`;
+            currentQuizAnswerString = ''; // Clear input string for new question
+            quizAnswerDisplay.textContent = '';
+            feedbackElement.className = 'feedback-message';
             feedbackElement.textContent = "";
             uitlegFoutElement.style.display = 'none';
 
-            // Draw the initial question triangle
             drawTriangleGeneric(
                 "questionTriangleSvg",
-                isAngleQuestion || questionType === 'pythagoras' ? null : angleA, // Pass null for angle if it's the unknown or a Pythagoras question
-                sideL, sideO, sideA, // Geometric values for drawing
-                angleLabelText, // Label for angle A
-                "L", "O", "A", // Base labels (internal keys)
-                highlightKey, // Item to highlight
-                300, 225, // Custom size
-                isAngleQuestion, // Pass true if it's an angle question
-                currentQuestionData.sidesDisplayConfig // Use the dynamic config here
+                currentQuestionData.isAngleQuestion || currentQuestionData.type === 'pythagoras' ? null : angleA,
+                sideL, sideO, sideA,
+                angleLabelText,
+                highlightKey, 300, 225,
+                currentQuestionData.isAngleQuestion,
+                currentQuestionData.sidesDisplayConfig,
+                'quiz'
             );
 
-            // Re-render MathJax
             if (window.MathJax) {
-                MathJax.typesetPromise().then(() => {
-                    // console.log('MathJax typeset complete after new question.');
-                });
+                MathJax.typesetPromise().then(() => {});
             }
         }
 
         function checkAnswer() {
-            const userAnswer = parseFloat(answerElement.value);
+            const userAnswer = parseFloat(currentQuizAnswerString);
             if (isNaN(userAnswer)) {
-                feedbackElement.className = 'feedback-section incorrect';
+                feedbackElement.className = 'feedback-message incorrect';
                 feedbackElement.textContent = "Voer een geldig getal in.";
-                uitlegFoutElement.style.display = 'none';
                 currentStreak = 0;
                 updateStreakDisplay();
                 return;
             }
 
             const correctAnswer = currentQuestionData.correctAnswer;
-            const tolerance = 0.1; // Allow for rounding differences
+            const tolerance = 0.1;
 
             if (Math.abs(userAnswer - correctAnswer) <= tolerance) {
-                feedbackElement.className = 'feedback-section correct';
+                feedbackElement.className = 'feedback-message correct';
                 feedbackElement.textContent = `Correct! Het antwoord is ${correctAnswer.toFixed(1)}.`;
                 uitlegFoutElement.style.display = 'none';
                 currentStreak++;
                 updateStreakDisplay();
-                newQuestion(); // Automatically generate a new question on correct answer
+                // Optionally, automatically generate a new question after a short delay
+                setTimeout(newQuestion, 1500); 
             } else {
-                feedbackElement.className = 'feedback-section incorrect';
+                feedbackElement.className = 'feedback-message incorrect';
                 feedbackElement.textContent = `Niet helemaal correct. Jouw antwoord: ${userAnswer.toFixed(1)}. Het juiste antwoord is ${correctAnswer.toFixed(1)}.`;
                 currentStreak = 0;
                 updateStreakDisplay();
@@ -1183,27 +1351,23 @@
         function toonUitlegStappen(data) {
             uitlegFoutRegel.innerHTML = data.formulaText;
             uitlegFoutBerekening.innerHTML = data.solveMethod;
-            uitlegStappenContainer.innerHTML = ''; // Clear previous steps
+            uitlegStappenContainer.innerHTML = '';
 
             data.calculationSteps.forEach((step, index) => {
                 const stepDiv = document.createElement('div');
                 stepDiv.className = 'stap-uitleg';
-                stepDiv.innerHTML = `<h5>Stap ${index + 1}</h5><p>${step.stepText}</p><svg id="uitlegStepSvg${index}" width="250" height="200"></svg>`;
+                stepDiv.innerHTML = `<h5>Stap ${index + 1}</h5><p>${step.stepText}</p><div class="diagram-area"><svg id="uitlegStepSvg${index}" width="250" height="200"></svg></div>`;
                 uitlegStappenContainer.appendChild(stepDiv);
 
-                // Draw triangle for this step with specific highlights and side display config
                 drawTriangleGeneric(
                     `uitlegStepSvg${index}`,
                     step.isAngleQuestion || data.type === 'pythagoras' ? null : step.angleA, 
-                    step.full_side_l,
-                    step.full_side_o,
-                    step.full_side_a,
+                    step.full_side_l, step.full_side_o, step.full_side_a,
                     step.angleLabelForDisplay,
-                    "L", "O", "A", // Base labels (internal keys)
-                    step.highlightKey,
-                    250, 200, 
+                    step.highlightKey, 250, 200, 
                     step.isAngleQuestion,
-                    step.sidesDisplayConfig // Use the specific config for this step
+                    step.sidesDisplayConfig,
+                    'quiz'
                 );
             });
 
@@ -1214,7 +1378,11 @@
 
         function newQuestion() {
             generateQuestion();
-            answerElement.focus();
+            currentQuizAnswerString = '';
+            quizAnswerDisplay.textContent = '';
+            feedbackElement.className = 'feedback-message';
+            feedbackElement.textContent = "";
+            uitlegFoutElement.style.display = 'none';
         }
 
         // Event listeners for checkboxes to ensure at least one is selected
@@ -1247,9 +1415,139 @@
             });
         });
 
+        // Digibord Mode Functions
+        function setActiveDigibordInput(key) {
+            activeDigibordInputKey = key;
+            currentDigibordInputString = digibordValues[key] !== null ? digibordValues[key].toString() : '';
+            digibordMessageElement.textContent = `Voer waarde in voor ${key}: ${currentDigibordInputString}`;
+            drawDigibordTriangle(); // Redraw to highlight active input
+        }
+
+        function calculateDigibord() {
+            const L = digibordValues.L;
+            const O = digibordValues.O;
+            const A = digibordValues.A;
+            let angleA_deg = digibordValues.angleA;
+
+            const knownCount = [L, O, A, angleA_deg].filter(val => val !== null).length;
+            const unknownCount = 4 - knownCount;
+
+            if (knownCount < 2) {
+                digibordMessageElement.textContent = "Voer minimaal twee waarden in (zijden of hoek) om te berekenen.";
+                return;
+            }
+            if (knownCount > 2 && unknownCount > 0) {
+                digibordMessageElement.textContent = "Te veel waarden ingevoerd. Reset en probeer het opnieuw met exact twee bekende waarden.";
+                return;
+            }
+
+            let calculatedL = L, calculatedO = O, calculatedA = A, calculatedAngleA_deg = angleA_deg;
+            let resultMessage = "Resultaten: ";
+
+            try {
+                if (knownCount === 2) {
+                    if (L !== null && O !== null) { // Find A or angleA
+                        calculatedA = Math.sqrt(L*L - O*O);
+                        calculatedAngleA_deg = toDegrees(Math.asin(O / L));
+                        resultMessage += `A = ${calculatedA.toFixed(1)}, Hoek A = ${calculatedAngleA_deg.toFixed(1)}°`;
+                    } else if (L !== null && A !== null) { // Find O or angleA
+                        calculatedO = Math.sqrt(L*L - A*A);
+                        calculatedAngleA_deg = toDegrees(Math.acos(A / L));
+                        resultMessage += `O = ${calculatedO.toFixed(1)}, Hoek A = ${calculatedAngleA_deg.toFixed(1)}°`;
+                    } else if (O !== null && A !== null) { // Find L or angleA
+                        calculatedL = Math.sqrt(O*O + A*A);
+                        calculatedAngleA_deg = toDegrees(Math.atan(O / A));
+                        resultMessage += `L = ${calculatedL.toFixed(1)}, Hoek A = ${calculatedAngleA_deg.toFixed(1)}°`;
+                    } else if (L !== null && angleA_deg !== null) { // Find O and A
+                        calculatedO = L * Math.sin(toRadians(angleA_deg));
+                        calculatedA = L * Math.cos(toRadians(angleA_deg));
+                        resultMessage += `O = ${calculatedO.toFixed(1)}, A = ${calculatedA.toFixed(1)}`;
+                    } else if (O !== null && angleA_deg !== null) { // Find L and A
+                        calculatedL = O / Math.sin(toRadians(angleA_deg));
+                        calculatedA = O / Math.tan(toRadians(angleA_deg));
+                        resultMessage += `L = ${calculatedL.toFixed(1)}, A = ${calculatedA.toFixed(1)}`;
+                    } else if (A !== null && angleA_deg !== null) { // Find L and O
+                        calculatedL = A / Math.cos(toRadians(angleA_deg));
+                        calculatedO = A * Math.tan(toRadians(angleA_deg));
+                        resultMessage += `L = ${calculatedL.toFixed(1)}, O = ${calculatedO.toFixed(1)}`;
+                    } else {
+                        digibordMessageElement.textContent = "Ongeldige combinatie van bekende waarden. Probeer het opnieuw.";
+                        return;
+                    }
+                } else if (knownCount === 3) {
+                    if (L !== null && O !== null && A !== null) {
+                        const pythCheck = Math.sqrt(O*O + A*A);
+                        if (Math.abs(pythCheck - L) > 0.1) {
+                            digibordMessageElement.textContent = "De ingevoerde zijden voldoen niet aan Pythagoras. Controleer je waarden.";
+                            return;
+                        }
+                        calculatedAngleA_deg = toDegrees(Math.atan(O / A));
+                        resultMessage += `Hoek A = ${calculatedAngleA_deg.toFixed(1)}° (consistent)`;
+                    } else if (L !== null && O !== null && angleA_deg !== null) {
+                        calculatedA = O / Math.tan(toRadians(angleA_deg));
+                        resultMessage += `A = ${calculatedA.toFixed(1)}`;
+                    } else if (L !== null && A !== null && angleA_deg !== null) {
+                        calculatedO = A * Math.tan(toRadians(angleA_deg));
+                        resultMessage += `O = ${calculatedO.toFixed(1)}`;
+                    } else if (O !== null && A !== null && angleA_deg !== null) {
+                        calculatedL = Math.sqrt(O*O + A*A);
+                        resultMessage += `L = ${calculatedL.toFixed(1)}`;
+                    }
+                }
+
+                digibordValues.L = calculatedL;
+                digibordValues.O = calculatedO;
+                digibordValues.A = calculatedA;
+                digibordValues.angleA = calculatedAngleA_deg;
+                digibordMessageElement.textContent = resultMessage;
+                activeDigibordInputKey = null;
+                currentDigibordInputString = '';
+                drawDigibordTriangle();
+            } catch (e) {
+                digibordMessageElement.textContent = "Fout bij berekening. Controleer de ingevoerde waarden (bijv. wortel uit negatief getal of hoek buiten bereik).";
+                console.error(e);
+            }
+            if (window.MathJax) {
+                MathJax.typesetPromise().then(() => {});
+            }
+        }
+
+        function resetDigibord() {
+            digibordValues = { L: null, O: null, A: null, angleA: null };
+            activeDigibordInputKey = null;
+            currentDigibordInputString = '';
+            digibordMessageElement.textContent = "Klik op een zijde (L, O, A) of hoek A om een waarde in te voeren.";
+            drawDigibordTriangle();
+            if (window.MathJax) {
+                MathJax.typesetPromise().then(() => {});
+            }
+        }
+
+        function drawDigibordTriangle() {
+            const config = {
+                L: digibordValues.L !== null ? 'value' : 'input',
+                O: digibordValues.O !== null ? 'value' : 'input',
+                A: digibordValues.A !== null ? 'value' : 'input',
+                angleA: digibordValues.angleA !== null ? 'value' : 'input'
+            };
+            drawTriangleGeneric(
+                "digibordTriangleSvg",
+                digibordValues.angleA,
+                digibordValues.L, digibordValues.O, digibordValues.A,
+                `Hoek A (${digibordValues.angleA !== null ? digibordValues.angleA.toFixed(1) : '?'})°`,
+                null, 450, 300,
+                digibordValues.angleA === null,
+                config,
+                'digibord'
+            );
+            if (window.MathJax) {
+                MathJax.typesetPromise().then(() => {});
+            }
+        }
+
         // Initial load
         document.addEventListener('DOMContentLoaded', () => {
-            newQuestion(); // Generate first question on page load
+            switchMode('quiz'); // Start in Quiz Mode by default
         });
     </script>
 </body>
