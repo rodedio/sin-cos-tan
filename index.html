@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wiskunde App - Pro Editie</title>
+    <title>Wiskunde Trainer Pro</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         :root {
@@ -21,8 +21,6 @@
             --numpad-bg: #444444;
             --numpad-button-bg: #555555;
             --numpad-button-text: #e0e0e0;
-            --active-input-border: #80c7ff;
-            --step-bg: #2d2d2d;
         }
 
         body.light-mode {
@@ -40,8 +38,6 @@
             --numpad-bg: #f0f0f0;
             --numpad-button-bg: #ffffff;
             --numpad-button-text: #333;
-            --active-input-border: #007bff;
-            --step-bg: #ffffff;
         }
 
         body {
@@ -101,13 +97,6 @@
             margin-top: 10px;
         }
 
-        .setting-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-
         .quiz-content { flex: 1; background: var(--section-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--section-border); }
 
         .diagram-area {
@@ -132,12 +121,7 @@
         }
 
         .feedback-area {
-            margin-top: 15px; padding: 15px; border-radius: 8px; display: none;
-        }
-
-        .stappenplan {
-            margin-top: 10px; padding: 10px; background: var(--step-bg);
-            border-left: 4px solid var(--header-color); font-size: 0.9em;
+            margin-top: 15px; padding: 15px; border-radius: 8px; display: none; text-align: center; font-weight: bold;
         }
 
         .triangle-side { stroke: #c9d1d9; stroke-width: 2px; }
@@ -147,7 +131,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>📐 Wiskunde Trainer Pro</h1>
+        <h1>📐 Wiskunde Trainer</h1>
 
         <div class="stats-bar">
             <span>Score: <span id="scoreVal">0</span></span>
@@ -160,14 +144,14 @@
             <button onclick="switchMode('digibord')">Digibord Modus</button>
         </div>
 
-        <div id="quizMode" style="display:block">
+        <div id="quizMode">
             <div class="quiz-settings">
-                <strong>Onderwerpen kiezen:</strong>
+                <strong>Onderwerpen oefenen:</strong>
                 <div class="settings-grid">
-                    <label class="setting-item"><input type="checkbox" id="check-pyth" checked> Pythagoras</label>
-                    <label class="setting-item"><input type="checkbox" id="check-sin" checked> Sinus</label>
-                    <label class="setting-item"><input type="checkbox" id="check-cos" checked> Cosinus</label>
-                    <label class="setting-item"><input type="checkbox" id="check-tan" checked> Tangens</label>
+                    <label><input type="checkbox" id="check-pyth" checked> Pythagoras</label>
+                    <label><input type="checkbox" id="check-sin" checked> Sinus</label>
+                    <label><input type="checkbox" id="check-cos" checked> Cosinus</label>
+                    <label><input type="checkbox" id="check-tan" checked> Tangens</label>
                 </div>
             </div>
 
@@ -178,21 +162,19 @@
                         <svg id="quizSvg" width="350" height="250"></svg>
                     </div>
                     <div id="quizAnswerDisplay"></div>
-                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                        <button onclick="checkAnswer()">Check (Enter)</button>
-                        <button onclick="generateQuestion()" style="background: #6c757d; color: white;">Nieuwe vraag</button>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button onclick="checkAnswer()">Check</button>
+                        <button onclick="generateQuestion()" style="background: #6c757d; color: white;">Volgende</button>
                     </div>
                     <div id="feedback" class="feedback-area"></div>
                 </div>
 
-                <div>
-                    <div class="numpad">
-                        <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
-                        <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
-                        <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
-                        <button onclick="press('.')">.</button><button onclick="press('0')">0</button>
-                        <button onclick="press('back')" style="background:#d9534f; color:white">⌫</button>
-                    </div>
+                <div class="numpad">
+                    <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
+                    <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
+                    <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
+                    <button onclick="press('.')">.</button><button onclick="press('0')">0</button>
+                    <button onclick="press('back')" style="background:#d9534f; color:white">⌫</button>
                 </div>
             </div>
         </div>
@@ -200,24 +182,22 @@
         <div id="digibordMode" style="display:none">
             <div class="mode-wrapper">
                 <div class="quiz-content">
-                    <h3>Digibord: Vul waarden in en bereken</h3>
+                    <h3>Digibord: Vrij tekenen en rekenen</h3>
                     <div class="diagram-area">
                         <svg id="digiSvg" width="450" height="300"></svg>
                     </div>
-                    <p id="digiInfo">Klik op een zijde of hoek om een waarde te geven.</p>
+                    <p>Klik op een zijde of hoek en voer een getal in.</p>
                     <div style="display: flex; gap: 10px; justify-content: center;">
                         <button onclick="calculateAll()">Bereken Alles</button>
                         <button onclick="resetDigi()" style="background:#6c757d; color:white">Reset</button>
                     </div>
                 </div>
-                <div>
-                    <div class="numpad">
-                        <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
-                        <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
-                        <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
-                        <button onclick="press('.')">.</button><button onclick="press('0')">0</button>
-                        <button onclick="press('back')" style="background:#d9534f; color:white">⌫</button>
-                    </div>
+                <div class="numpad">
+                    <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
+                    <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
+                    <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
+                    <button onclick="press('.')">.</button><button onclick="press('0')">0</button>
+                    <button onclick="press('back')" style="background:#d9534f; color:white">⌫</button>
                 </div>
             </div>
         </div>
@@ -247,7 +227,7 @@
         function press(key) {
             if (key === 'back') state.input = state.input.slice(0, -1);
             else if (key === '.' && state.input.includes('.')) return;
-            else state.input += key;
+            else if (state.input.length < 6) state.input += key;
 
             if (state.mode === 'quiz') {
                 document.getElementById('quizAnswerDisplay').textContent = state.input;
@@ -257,18 +237,11 @@
             }
         }
 
-        window.addEventListener('keydown', e => {
-            if(e.key >= '0' && e.key <= '9' || e.key === '.') press(e.key);
-            if(e.key === 'Backspace') press('back');
-            if(e.key === 'Enter') checkAnswer();
-        });
-
         function generateQuestion() {
             state.input = '';
             document.getElementById('quizAnswerDisplay').textContent = '';
             document.getElementById('feedback').style.display = 'none';
             
-            // Check welke onderwerpen aan staan
             const activeTypes = [];
             if(document.getElementById('check-pyth').checked) activeTypes.push('pyth');
             if(document.getElementById('check-sin').checked) activeTypes.push('sin');
@@ -276,12 +249,11 @@
             if(document.getElementById('check-tan').checked) activeTypes.push('tan');
 
             if(activeTypes.length === 0) {
-                document.getElementById('questionText').textContent = "Selecteer minstens één onderwerp om te oefenen!";
+                document.getElementById('questionText').textContent = "Selecteer onderwerpen!";
                 return;
             }
 
             const type = activeTypes[Math.floor(Math.random() * activeTypes.length)];
-            
             const hoek = 25 + Math.random() * 45;
             const A = 5 + Math.random() * 10;
             const O = A * Math.tan(toRad(hoek));
@@ -290,21 +262,17 @@
             let q = { hoek, A, O, L, type };
 
             if (type === 'pyth') {
-                q.text = "Bereken de schuine zijde (L) met Pythagoras.";
+                q.text = "Bereken zijde L.";
                 q.draw = { A, O }; q.ans = L; q.target = 'L';
-                q.uitleg = `Stap 1: Gebruik a² + b² = c²<br>Stap 2: ${A.toFixed(1)}² + ${O.toFixed(1)}² = L²<br>Stap 3: √(${(A*A+O*O).toFixed(1)}) = ${L.toFixed(1)}`;
             } else if (type === 'sin') {
-                q.text = `Bereken de overstaande zijde (O) met de Sinus (SOS).`;
+                q.text = "Bereken zijde O.";
                 q.draw = { hoek, L }; q.ans = O; q.target = 'O';
-                q.uitleg = `Stap 1: Gebruik SOS (Sin = Overstaand / Schuin)<br>Stap 2: Sin(${hoek.toFixed(1)}°) = O / ${L.toFixed(1)}<br>Stap 3: O = Sin(${hoek.toFixed(1)}°) × ${L.toFixed(1)} = ${O.toFixed(1)}`;
             } else if (type === 'cos') {
-                q.text = `Bereken de aanliggende zijde (A) met de Cosinus (CAS).`;
+                q.text = "Bereken zijde A.";
                 q.draw = { hoek, L }; q.ans = A; q.target = 'A';
-                q.uitleg = `Stap 1: Gebruik CAS (Cos = Aanliggend / Schuin)<br>Stap 2: Cos(${hoek.toFixed(1)}°) = A / ${L.toFixed(1)}<br>Stap 3: A = Cos(${hoek.toFixed(1)}°) × ${L.toFixed(1)} = ${A.toFixed(1)}`;
             } else {
-                q.text = `Bereken de overstaande zijde (O) met de Tangens (TOA).`;
+                q.text = "Bereken zijde O.";
                 q.draw = { hoek, A }; q.ans = O; q.target = 'O';
-                q.uitleg = `Stap 1: Gebruik TOA (Tan = Overstaand / Aanliggend)<br>Stap 2: Tan(${hoek.toFixed(1)}°) = O / ${A.toFixed(1)}<br>Stap 3: O = Tan(${hoek.toFixed(1)}°) × ${A.toFixed(1)} = ${O.toFixed(1)}`;
             }
 
             state.current = q;
@@ -316,7 +284,7 @@
             if (!state.current || state.mode !== 'quiz' || state.input === '') return;
             const userAns = parseFloat(state.input);
             const diff = Math.abs(userAns - state.current.ans);
-            const correct = diff < 0.3;
+            const correct = diff < 0.2;
 
             const fb = document.getElementById('feedback');
             fb.style.display = 'block';
@@ -325,12 +293,11 @@
             if (correct) {
                 state.score += 10;
                 state.streak++;
-                fb.innerHTML = `<strong>Correct! +10 punten</strong>`;
-                setTimeout(generateQuestion, 1500);
+                fb.innerHTML = `Correct! +10`;
+                setTimeout(generateQuestion, 1200);
             } else {
                 state.streak = 0;
-                fb.innerHTML = `<strong>Helaas!</strong> Het juiste antwoord was ${state.current.ans.toFixed(1)}
-                                <div class="stappenplan">${state.current.uitleg}</div>`;
+                fb.innerHTML = `Fout. Het antwoord was ${state.current.ans.toFixed(1)}`;
             }
 
             document.getElementById('scoreVal').textContent = state.score;
@@ -354,11 +321,7 @@
             const x3 = x1, y3 = y1 - so;
 
             const g = svg.append("g");
-            
-            const lines = [
-                {x1, y1, x2, y2, k:'A'}, {x1, y1, x2:x3, y2:y3, k:'O'}, {x1:x2, y1:y2, x2:x3, y2:y3, k:'L'}
-            ];
-
+            const lines = [{x1,y1,x2,y2,k:'A'}, {x1,y1,x2:x3,y2:y3,k:'O'}, {x1:x2,y1:y2,x2:x3,y2:y3,k:'L'}];
             g.selectAll("line").data(lines).enter().append("line")
                 .attr("x1", d=>d.x1).attr("y1", d=>d.y1).attr("x2", d=>d.x2).attr("y2", d=>d.y2)
                 .attr("class", d => `triangle-side ${d.k === targetKey ? 'highlight' : ''}`);
@@ -372,11 +335,7 @@
             g.selectAll("text").data(labels).enter().append("text")
                 .attr("x", d=>d.x).attr("y", d=>d.y).attr("text-anchor", d=>d.anchor||'middle')
                 .attr("class", d => `label-text ${state.activeKey === d.k ? 'highlight' : ''}`)
-                .text(d => {
-                    if (d.val) return `${d.label}: ${d.val.toFixed(1)}`;
-                    if (d.k === targetKey) return `${d.label}: ?`;
-                    return d.label;
-                })
+                .text(d => d.val ? `${d.label}: ${d.val.toFixed(1)}` : (d.k === targetKey ? `${d.label}: ?` : d.label))
                 .on("click", (e, d) => { if(interactive) { state.activeKey = d.k; state.input = ''; draw(id, data, true); } });
 
             g.append("text").attr("x", x2-45).attr("y", y2-10).attr("class", "label-text")
@@ -389,19 +348,16 @@
 
         function calculateAll() {
             let v = state.digiValues;
-            try {
-                if (v.O && v.A) { v.L = Math.sqrt(v.O**2 + v.A**2); v.hoek = toDeg(Math.atan(v.O/v.A)); }
-                else if (v.L && v.O) { v.A = Math.sqrt(v.L**2 - v.O**2); v.hoek = toDeg(Math.asin(v.O/v.L)); }
-                else if (v.hoek && v.A) { v.O = v.A * Math.tan(toRad(v.hoek)); v.L = v.A / Math.cos(toRad(v.hoek)); }
-                else if (v.hoek && v.L) { v.O = v.L * Math.sin(toRad(v.hoek)); v.A = v.L * Math.cos(toRad(v.hoek)); }
-            } catch(e) {}
+            if (v.O && v.A) { v.L = Math.sqrt(v.O**2 + v.A**2); v.hoek = toDeg(Math.atan(v.O/v.A)); }
+            else if (v.L && v.O) { v.A = Math.sqrt(v.L**2 - v.O**2); v.hoek = toDeg(Math.asin(v.O/v.L)); }
+            else if (v.hoek && v.A) { v.O = v.A * Math.tan(toRad(v.hoek)); v.L = v.A / Math.cos(toRad(v.hoek)); }
+            else if (v.hoek && v.L) { v.O = v.L * Math.sin(toRad(v.hoek)); v.A = v.L * Math.cos(toRad(v.hoek)); }
             draw('digiSvg', v, true);
         }
 
         function resetDigi() {
             state.digiValues = { A: null, O: null, L: null, hoek: null };
-            state.activeKey = null;
-            state.input = '';
+            state.activeKey = null; state.input = '';
             draw('digiSvg', state.digiValues, true);
         }
 
@@ -411,7 +367,6 @@
             else draw('digiSvg', state.digiValues, true);
         };
 
-        // Start
         generateQuestion();
     </script>
 </body>
