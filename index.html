@@ -3,263 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wiskunde App - Standaard Dark Mode</title>
+    <title>Wiskunde App - Pro Editie</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        /* Variabelen voor Dark Mode (Standaard) */
         :root {
             --bg-color: #1a1a1a;
             --text-color: #e0e0e0;
             --container-bg: #2c2c2c;
             --header-color: #66b2ff;
-            --explanation-subtitle-color: #80c7ff;
             --section-bg: #383838;
             --section-border: #555555;
             --diagram-wrapper-bg: #222222;
-            --diagram-wrapper-border: #4a4a4a;
-            --input-bg: #3e3e3e;
-            --input-text: #e0e0e0;
-            --input-border: #666666;
             --button-primary-bg: #66b2ff;
             --button-primary-text: #1a1a1a;
-            --button-primary-hover-bg: #80c7ff;
-            --button-secondary-bg: #5a6268;
-            --button-secondary-text: #e0e0e0;
-            --button-secondary-hover-bg: #707880;
-            --feedback-correct-text: #a7f0ba;
             --feedback-correct-bg: #223e2b;
-            --feedback-correct-border: #355e40;
-            --feedback-incorrect-text: #f5b9c0;
             --feedback-incorrect-bg: #4a2328;
-            --feedback-incorrect-border: #70363d;
-            --uitleg-extra-bg: #4d432c;
-            --uitleg-extra-border: #806f44;
-            --uitleg-stap-bg: #383838;
-            --uitleg-stap-border: #66b2ff;
-            --uitleg-stap-header: #66b2ff;
-            --svg-default-stroke: #c9d1d9;
-            --svg-highlight-stroke: #ff8c82;
-            --svg-text-highlight-fill: #ff8c82;
-            --svg-vertex-label-fill: #66b2ff;
-            --svg-side-label-fill: #80c7ff;
-            --svg-angle-label-fill: #ff8080;
-            --svg-right-angle-stroke: #888888;
-            --mode-bg: #333333;
-            --mode-border: #555555;
             --numpad-bg: #444444;
             --numpad-button-bg: #555555;
-            --numpad-button-hover-bg: #666666;
             --numpad-button-text: #e0e0e0;
             --active-input-border: #80c7ff;
-            --active-input-bg: #383838;
-            --answer-display-bg: #3e3e3e;
-            --answer-display-border: #666;
+            --step-bg: #2d2d2d;
         }
 
-        /* Optionele Light Mode (indien de gebruiker terugschakelt) */
         body.light-mode {
             --bg-color: #f0f9ff;
             --text-color: #333;
             --container-bg: #ffffff;
             --header-color: #005A9C;
-            --explanation-subtitle-color: #007bff;
             --section-bg: #e7f5ff;
             --section-border: #bde0fe;
             --diagram-wrapper-bg: #f8f9fa;
-            --diagram-wrapper-border: #dee2e6;
-            --input-bg: #fff;
-            --input-text: #333;
-            --input-border: #ced4da;
             --button-primary-bg: #007bff;
             --button-primary-text: white;
-            --button-primary-hover-bg: #0056b3;
-            --button-secondary-bg: #6c757d;
-            --button-secondary-text: white;
-            --button-secondary-hover-bg: #5a6268;
-            --feedback-correct-text: #155724;
             --feedback-correct-bg: #d4edda;
-            --feedback-correct-border: #c3e6cb;
-            --feedback-incorrect-text: #721c24;
             --feedback-incorrect-bg: #f8d7da;
-            --feedback-incorrect-border: #f5c6cb;
-            --svg-default-stroke: #333;
-            --svg-highlight-stroke: #d9534f;
-            --svg-text-highlight-fill: #d9534f;
-            --svg-vertex-label-fill: #005A9C;
-            --svg-side-label-fill: #007bff;
-            --svg-angle-label-fill: red;
-            --svg-right-angle-stroke: #555;
-            --mode-bg: #e0e0e0;
-            --mode-border: #a0a0a0;
             --numpad-bg: #f0f0f0;
             --numpad-button-bg: #ffffff;
-            --numpad-button-hover-bg: #e0e0e0;
             --numpad-button-text: #333;
             --active-input-border: #007bff;
-            --active-input-bg: #e7f5ff;
-            --answer-display-bg: #f0f0f0;
-            --answer-display-border: #ccc;
+            --step-bg: #ffffff;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding-top: 20px;
-            padding-bottom: 20px;
-            transition: background-color 0.3s, color 0.3s;
+            margin: 0; padding: 20px;
+            transition: all 0.3s;
         }
 
         .container {
-            max-width: 800px;
-            width: 90%;
-            margin: 20px auto;
+            max-width: 900px;
+            margin: 0 auto;
             background: var(--container-bg);
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
 
-        h1, h2 { color: var(--header-color); text-align: center; margin-bottom: 20px; }
-        
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: var(--section-bg);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .streak-fire { color: #ff8c00; }
+
         .main-button-group { text-align: center; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
         button {
-            padding: 12px 20px;
-            background-color: var(--button-primary-bg);
-            color: var(--button-primary-text);
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.2s;
-            font-weight: 600;
+            padding: 12px 20px; background-color: var(--button-primary-bg);
+            color: var(--button-primary-text); border: none; border-radius: 6px;
+            cursor: pointer; font-weight: 600; transition: 0.2s;
         }
-        button:hover { opacity: 0.9; transform: translateY(-1px); }
-        button:active { transform: translateY(0); }
 
-        .explanation, .quiz-section, .digibord-section {
-            margin-bottom: 25px;
-            padding: 20px;
-            border: 1px solid var(--section-border);
-            border-radius: 8px;
-            background-color: var(--section-bg);
+        .mode-wrapper { display: flex; gap: 20px; margin-top: 20px; flex-direction: column; }
+        @media (min-width: 768px) {
+            .mode-wrapper { flex-direction: row; }
         }
+
+        .quiz-settings {
+            background: var(--section-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid var(--section-border);
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .quiz-content { flex: 1; background: var(--section-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--section-border); }
 
         .diagram-area {
-            text-align: center;
-            margin-bottom: 15px;
-            background-color: var(--diagram-wrapper-bg);
-            border-radius: 6px;
-            padding: 10px;
-            border: 1px solid var(--diagram-wrapper-border);
-        }
-
-        .quiz-mode-wrapper, .digibord-mode-wrapper {
-            display: flex; gap: 20px; margin-top: 25px; padding: 20px;
-            border: 1px solid var(--mode-border); border-radius: 8px; background-color: var(--mode-bg);
-        }
-
-        .numpad-container {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-            width: 200px; background-color: var(--numpad-bg); padding: 15px; border-radius: 8px;
-        }
-
-        .numpad-container button {
-            width: 100%; padding: 15px 0; font-size: 1.2em;
-            background-color: var(--numpad-button-bg); color: var(--numpad-button-text);
+            background: var(--diagram-wrapper-bg); border-radius: 6px; padding: 10px;
+            margin: 15px 0; text-align: center;
         }
 
         #quizAnswerDisplay {
-            min-height: 50px; line-height: 50px; background-color: var(--answer-display-bg);
-            border: 2px solid var(--answer-display-border); border-radius: 6px;
-            font-size: 1.6em; font-weight: bold; margin-bottom: 10px;
-            text-align: center; color: var(--header-color);
+            height: 60px; line-height: 60px; font-size: 2em; text-align: center;
+            background: var(--bg-color); border: 2px solid var(--section-border);
+            border-radius: 8px; margin-bottom: 10px; color: var(--header-color);
         }
 
-        .feedback-message {
-            margin-top: 15px; font-weight: bold; padding: 15px; border-radius: 6px; text-align: center; display: none;
+        .numpad {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            background: var(--numpad-bg); padding: 15px; border-radius: 10px; width: 100%; max-width: 250px; margin: 0 auto;
         }
-        .feedback-message.show { display: block; }
-        .feedback-message.correct { color: var(--feedback-correct-text); background-color: var(--feedback-correct-bg); }
-        .feedback-message.incorrect { color: var(--feedback-incorrect-text); background-color: var(--feedback-incorrect-bg); }
 
-        /* SVG Styling */
-        .triangle-side { stroke: var(--svg-default-stroke); stroke-width: 2px; }
-        .triangle-side.highlighted-stroke { stroke: var(--svg-highlight-stroke); stroke-width: 4px; }
-        .side-label, .angle-label-text { fill: var(--svg-side-label-fill); font-size: 14px; font-weight: 600; cursor: pointer; }
-        .active-input-text { fill: var(--active-input-border); text-decoration: underline; font-weight: 800; }
-        .right-angle-symbol { stroke: var(--svg-right-angle-stroke); fill: none; stroke-width: 2px; }
-
-        .keyboard-hint {
-            font-size: 0.85em; color: var(--text-color); opacity: 0.7; text-align: center; margin-top: 8px;
-            font-style: italic;
+        .numpad button {
+            background: var(--numpad-button-bg); color: var(--numpad-button-text);
+            font-size: 1.4em; padding: 15px 0;
         }
+
+        .feedback-area {
+            margin-top: 15px; padding: 15px; border-radius: 8px; display: none;
+        }
+
+        .stappenplan {
+            margin-top: 10px; padding: 10px; background: var(--step-bg);
+            border-left: 4px solid var(--header-color); font-size: 0.9em;
+        }
+
+        .triangle-side { stroke: #c9d1d9; stroke-width: 2px; }
+        .highlight { stroke: #ff8c82; stroke-width: 4px; }
+        .label-text { fill: var(--header-color); font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📐 Wiskunde App</h1>
+        <h1>📐 Wiskunde Trainer Pro</h1>
+
+        <div class="stats-bar">
+            <span>Score: <span id="scoreVal">0</span></span>
+            <span>Streak: <span id="streakVal" class="streak-fire">0</span> 🔥</span>
+        </div>
 
         <div class="main-button-group">
             <button id="themeToggle">☀️ Light Mode</button>
-            <button id="toggleQuizMode">Quiz Modus</button>
-            <button id="toggleDigibordMode">Digibord Modus</button>
+            <button onclick="switchMode('quiz')">Quiz Modus</button>
+            <button onclick="switchMode('digibord')">Digibord Modus</button>
         </div>
 
-        <!-- Quiz Modus -->
-        <div class="quiz-mode-wrapper" id="quizModeWrapper">
-            <div style="flex-grow: 1;">
-                <div class="quiz-section">
-                    <p id="question">Klik op 'Nieuwe Vraag' om te beginnen.</p>
+        <div id="quizMode" style="display:block">
+            <div class="quiz-settings">
+                <strong>Onderwerpen kiezen:</strong>
+                <div class="settings-grid">
+                    <label class="setting-item"><input type="checkbox" id="check-pyth" checked> Pythagoras</label>
+                    <label class="setting-item"><input type="checkbox" id="check-sin" checked> Sinus</label>
+                    <label class="setting-item"><input type="checkbox" id="check-cos" checked> Cosinus</label>
+                    <label class="setting-item"><input type="checkbox" id="check-tan" checked> Tangens</label>
+                </div>
+            </div>
+
+            <div class="mode-wrapper">
+                <div class="quiz-content">
+                    <h3 id="questionText">Laden...</h3>
                     <div class="diagram-area">
-                         <svg id="questionTriangleSvg" width="300" height="225"></svg>
+                        <svg id="quizSvg" width="350" height="250"></svg>
                     </div>
                     <div id="quizAnswerDisplay"></div>
-                    <div class="keyboard-hint">Tip: Gebruik je toetsenbord (0-9, punt, Enter, Backspace)</div>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <button onclick="checkAnswer()">Controleer (Enter)</button>
-                        <button onclick="newQuestion()" style="background-color: var(--button-secondary-bg);">Nieuwe Vraag</button>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="checkAnswer()">Check (Enter)</button>
+                        <button onclick="generateQuestion()" style="background: #6c757d; color: white;">Nieuwe vraag</button>
                     </div>
-                    <div id="feedback" class="feedback-message"></div>
+                    <div id="feedback" class="feedback-area"></div>
                 </div>
-            </div>
-            <div class="numpad-container">
-                <button onclick="numpadInput('1')">1</button><button onclick="numpadInput('2')">2</button><button onclick="numpadInput('3')">3</button>
-                <button onclick="numpadInput('4')">4</button><button onclick="numpadInput('5')">5</button><button onclick="numpadInput('6')">6</button>
-                <button onclick="numpadInput('7')">7</button><button onclick="numpadInput('8')">8</button><button onclick="numpadInput('9')">9</button>
-                <button onclick="numpadInput('.')">.</button><button onclick="numpadInput('0')">0</button>
-                <button onclick="numpadInput('backspace')" style="background-color: #d9534f; color: white;">⌫</button>
+
+                <div>
+                    <div class="numpad">
+                        <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
+                        <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
+                        <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
+                        <button onclick="press('.')">.</button><button onclick="press('0')">0</button>
+                        <button onclick="press('back')" style="background:#d9534f; color:white">⌫</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Digibord Modus -->
-        <div class="digibord-mode-wrapper" id="digibordModeWrapper" style="display: none;">
-            <div style="flex-grow: 1;">
-                <div class="digibord-section">
-                    <p id="digibordMessage">Klik op een label om een waarde te typen.</p>
+        <div id="digibordMode" style="display:none">
+            <div class="mode-wrapper">
+                <div class="quiz-content">
+                    <h3>Digibord: Vul waarden in en bereken</h3>
                     <div class="diagram-area">
-                        <svg id="digibordTriangleSvg" width="450" height="300"></svg>
+                        <svg id="digiSvg" width="450" height="300"></svg>
                     </div>
-                    <div style="text-align: center;">
-                        <button onclick="calculateDigibord()">Bereken Alles</button>
-                        <button onclick="resetDigibord()" style="background-color: var(--button-secondary-bg);">Reset</button>
+                    <p id="digiInfo">Klik op een zijde of hoek om een waarde te geven.</p>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button onclick="calculateAll()">Bereken Alles</button>
+                        <button onclick="resetDigi()" style="background:#6c757d; color:white">Reset</button>
                     </div>
                 </div>
-            </div>
-            <div class="numpad-container">
-                <button onclick="numpadInput('1')">1</button><button onclick="numpadInput('2')">2</button><button onclick="numpadInput('3')">3</button>
-                <button onclick="numpadInput('4')">4</button><button onclick="numpadInput('5')">5</button><button onclick="numpadInput('6')">6</button>
-                <button onclick="numpadInput('7')">7</button><button onclick="numpadInput('8')">8</button><button onclick="numpadInput('9')">9</button>
-                <button onclick="numpadInput('.')">.</button><button onclick="numpadInput('0')">0</button>
-                <button onclick="numpadInput('backspace')" style="background-color: #d9534f; color: white;">⌫</button>
+                <div>
+                    <div class="numpad">
+                        <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
+                        <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
+                        <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
+                        <button onclick="press('.')">.</button><button onclick="press('0')">0</button>
+                        <button onclick="press('back')" style="background:#d9534f; color:white">⌫</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -267,164 +226,193 @@
     <script>
         let state = {
             mode: 'quiz',
+            score: 0,
             streak: 0,
-            currentQuestion: null,
-            quizInput: '',
-            digibordValues: { L: null, O: null, A: null, angleA: null },
-            activeDigibordKey: null,
-            digibordInput: ''
+            input: '',
+            current: null,
+            digiValues: { A: null, O: null, L: null, hoek: null },
+            activeKey: null
         };
 
-        const toRad = deg => deg * (Math.PI / 180);
-        const toDeg = rad => rad * (180 / Math.PI);
+        const toRad = d => d * Math.PI / 180;
+        const toDeg = r => r * 180 / Math.PI;
 
-        // Toetsenbord Luisteraar
-        window.addEventListener('keydown', (e) => {
-            if ((e.key >= '0' && e.key <= '9') || e.key === '.' || e.key === ',') {
-                numpadInput(e.key === ',' ? '.' : e.key);
+        function switchMode(m) {
+            state.mode = m;
+            document.getElementById('quizMode').style.display = m === 'quiz' ? 'block' : 'none';
+            document.getElementById('digibordMode').style.display = m === 'digibord' ? 'block' : 'none';
+            if(m === 'quiz') generateQuestion(); else draw('digiSvg', state.digiValues, true);
+        }
+
+        function press(key) {
+            if (key === 'back') state.input = state.input.slice(0, -1);
+            else if (key === '.' && state.input.includes('.')) return;
+            else state.input += key;
+
+            if (state.mode === 'quiz') {
+                document.getElementById('quizAnswerDisplay').textContent = state.input;
+            } else if (state.activeKey) {
+                state.digiValues[state.activeKey] = parseFloat(state.input);
+                draw('digiSvg', state.digiValues, true);
             }
-            else if (e.key === 'Backspace') {
-                numpadInput('backspace');
-            }
-            else if (e.key === 'Enter') {
-                if (state.mode === 'quiz') checkAnswer();
-                else if (state.mode === 'digibord') calculateDigibord();
-            }
-            else if (e.key === 'Escape') {
-                if (state.mode === 'digibord') resetDigibord();
-            }
+        }
+
+        window.addEventListener('keydown', e => {
+            if(e.key >= '0' && e.key <= '9' || e.key === '.') press(e.key);
+            if(e.key === 'Backspace') press('back');
+            if(e.key === 'Enter') checkAnswer();
         });
 
-        function numpadInput(val) {
-            if (state.mode === 'quiz') {
-                if (val === 'backspace') state.quizInput = state.quizInput.slice(0, -1);
-                else if (val === '.' && !state.quizInput.includes('.')) state.quizInput += '.';
-                else if (val !== '.') state.quizInput += val;
-                document.getElementById('quizAnswerDisplay').textContent = state.quizInput;
-            } else {
-                if (!state.activeDigibordKey) return;
-                if (val === 'backspace') state.digibordInput = state.digibordInput.slice(0, -1);
-                else if (val === '.' && !state.digibordInput.includes('.')) state.digibordInput += '.';
-                else if (val !== '.') state.digibordInput += val;
-                
-                state.digibordValues[state.activeDigibordKey] = parseFloat(state.digibordInput) || null;
-                document.getElementById('digibordMessage').textContent = `Invoer voor ${state.activeDigibordKey}: ${state.digibordInput}`;
-                drawTriangle('digibordTriangleSvg', state.digibordValues, 'digibord');
-            }
-        }
-
-        function drawTriangle(svgId, data, type) {
-            const svg = d3.select("#" + svgId);
-            svg.selectAll("*").remove();
-            const width = +svg.attr("width"), height = +svg.attr("height"), pad = 60;
-
-            let angle = data.angleA || 30, a = data.A || 10, o = data.O || (a * Math.tan(toRad(angle)));
-            const scale = Math.min((width - 2*pad) / Math.max(a, 1), (height - 2*pad) / Math.max(o, 1));
-            const sa = a * scale, so = o * scale;
-            const xC = pad, yC = height - pad, xA = xC + sa, yA = yC, xB = xC, yB = yC - so;
-
-            const g = svg.append("g");
-            const lines = [{x1:xC, y1:yC, x2:xA, y2:yA, key:'A'}, {x1:xC, y1:yC, x2:xB, y2:yB, key:'O'}, {x1:xA, y1:yA, x2:xB, y2:yB, key:'L'}];
-            
-            g.selectAll("line").data(lines).enter().append("line")
-                .attr("x1", d=>d.x1).attr("y1", d=>d.y1).attr("x2", d=>d.x2).attr("y2", d=>d.y2)
-                .attr("class", d => "triangle-side" + (state.currentQuestion?.highlight === d.key ? " highlighted-stroke" : ""));
-
-            const labels = [
-                {x: (xC+xA)/2, y: yA + 30, text: `A: ${data.A?.toFixed(1) || '?'}`, key: 'A'},
-                {x: xC - 10, y: (yC+yB)/2, text: `O: ${data.O?.toFixed(1) || '?'}`, key: 'O', anchor: 'end'},
-                {x: (xA+xB)/2 + 20, y: (yA+yB)/2 - 10, text: `L: ${data.L?.toFixed(1) || '?'}`, key: 'L', anchor: 'start'}
-            ];
-
-            g.selectAll(".side-label").data(labels).enter().append("text")
-                .attr("x", d=>d.x).attr("y", d=>d.y).attr("text-anchor", d => d.anchor || 'middle')
-                .attr("class", d => `side-label ${state.activeDigibordKey === d.key ? 'active-input-text' : ''}`)
-                .text(d => d.text).on("click", (e,d) => type === 'digibord' && selectKey(d.key));
-
-            g.append("text").attr("x", xA - 55).attr("y", yA - 15)
-                .attr("class", `angle-label-text ${state.activeDigibordKey === 'angleA' ? 'active-input-text' : ''}`)
-                .text(`∠A: ${data.angleA?.toFixed(1) || '?'}°`).on("click", () => type === 'digibord' && selectKey('angleA'));
-
-            g.append("path").attr("d", `M ${xC+15},${yC} L ${xC+15},${yC-15} L ${xC},${yC-15}`).attr("class", "right-angle-symbol");
-        }
-
-        function selectKey(key) {
-            state.activeDigibordKey = key;
-            state.digibordInput = '';
-            document.getElementById('digibordMessage').textContent = `Typ een waarde voor ${key}...`;
-            drawTriangle('digibordTriangleSvg', state.digibordValues, 'digibord');
-        }
-
-        function newQuestion() {
-            const angle = 25 + Math.random() * 40;
-            const a = 6 + Math.random() * 8;
-            const o = a * Math.tan(toRad(angle));
-            const l = Math.sqrt(a*a + o*o);
-            state.quizInput = '';
+        function generateQuestion() {
+            state.input = '';
             document.getElementById('quizAnswerDisplay').textContent = '';
-            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('feedback').style.display = 'none';
             
-            const qType = Math.random();
-            if (qType < 0.5) {
-                state.currentQuestion = { angleA: angle, A: a, O: o, L: l, highlight: 'O', ans: o, text: `Bereken O als ∠A = ${angle.toFixed(1)}° en A = ${a.toFixed(1)}` };
-                drawTriangle('questionTriangleSvg', { angleA: angle, A: a }, 'quiz');
-            } else {
-                state.currentQuestion = { angleA: angle, A: a, O: o, L: l, highlight: 'L', ans: l, text: `Bereken L met Pythagoras als O = ${o.toFixed(1)} en A = ${a.toFixed(1)}` };
-                drawTriangle('questionTriangleSvg', { O: o, A: a }, 'quiz');
+            // Check welke onderwerpen aan staan
+            const activeTypes = [];
+            if(document.getElementById('check-pyth').checked) activeTypes.push('pyth');
+            if(document.getElementById('check-sin').checked) activeTypes.push('sin');
+            if(document.getElementById('check-cos').checked) activeTypes.push('cos');
+            if(document.getElementById('check-tan').checked) activeTypes.push('tan');
+
+            if(activeTypes.length === 0) {
+                document.getElementById('questionText').textContent = "Selecteer minstens één onderwerp om te oefenen!";
+                return;
             }
-            document.getElementById('question').textContent = state.currentQuestion.text;
+
+            const type = activeTypes[Math.floor(Math.random() * activeTypes.length)];
+            
+            const hoek = 25 + Math.random() * 45;
+            const A = 5 + Math.random() * 10;
+            const O = A * Math.tan(toRad(hoek));
+            const L = Math.sqrt(A*A + O*O);
+            
+            let q = { hoek, A, O, L, type };
+
+            if (type === 'pyth') {
+                q.text = "Bereken de schuine zijde (L) met Pythagoras.";
+                q.draw = { A, O }; q.ans = L; q.target = 'L';
+                q.uitleg = `Stap 1: Gebruik a² + b² = c²<br>Stap 2: ${A.toFixed(1)}² + ${O.toFixed(1)}² = L²<br>Stap 3: √(${(A*A+O*O).toFixed(1)}) = ${L.toFixed(1)}`;
+            } else if (type === 'sin') {
+                q.text = `Bereken de overstaande zijde (O) met de Sinus (SOS).`;
+                q.draw = { hoek, L }; q.ans = O; q.target = 'O';
+                q.uitleg = `Stap 1: Gebruik SOS (Sin = Overstaand / Schuin)<br>Stap 2: Sin(${hoek.toFixed(1)}°) = O / ${L.toFixed(1)}<br>Stap 3: O = Sin(${hoek.toFixed(1)}°) × ${L.toFixed(1)} = ${O.toFixed(1)}`;
+            } else if (type === 'cos') {
+                q.text = `Bereken de aanliggende zijde (A) met de Cosinus (CAS).`;
+                q.draw = { hoek, L }; q.ans = A; q.target = 'A';
+                q.uitleg = `Stap 1: Gebruik CAS (Cos = Aanliggend / Schuin)<br>Stap 2: Cos(${hoek.toFixed(1)}°) = A / ${L.toFixed(1)}<br>Stap 3: A = Cos(${hoek.toFixed(1)}°) × ${L.toFixed(1)} = ${A.toFixed(1)}`;
+            } else {
+                q.text = `Bereken de overstaande zijde (O) met de Tangens (TOA).`;
+                q.draw = { hoek, A }; q.ans = O; q.target = 'O';
+                q.uitleg = `Stap 1: Gebruik TOA (Tan = Overstaand / Aanliggend)<br>Stap 2: Tan(${hoek.toFixed(1)}°) = O / ${A.toFixed(1)}<br>Stap 3: O = Tan(${hoek.toFixed(1)}°) × ${A.toFixed(1)} = ${O.toFixed(1)}`;
+            }
+
+            state.current = q;
+            document.getElementById('questionText').textContent = q.text;
+            draw('quizSvg', q.draw, false, q.target);
         }
 
         function checkAnswer() {
-            const val = parseFloat(state.quizInput);
-            if (isNaN(val)) return;
-            const correct = Math.abs(val - state.currentQuestion.ans) < 0.2;
+            if (!state.current || state.mode !== 'quiz' || state.input === '') return;
+            const userAns = parseFloat(state.input);
+            const diff = Math.abs(userAns - state.current.ans);
+            const correct = diff < 0.3;
+
             const fb = document.getElementById('feedback');
-            fb.textContent = correct ? "Goed gedaan! 🎉" : `Helaas, het antwoord was ${state.currentQuestion.ans.toFixed(1)}`;
-            fb.className = `feedback-message show ${correct ? 'correct' : 'incorrect'}`;
-            if (correct) setTimeout(newQuestion, 1500);
+            fb.style.display = 'block';
+            fb.style.background = correct ? 'var(--feedback-correct-bg)' : 'var(--feedback-incorrect-bg)';
+            
+            if (correct) {
+                state.score += 10;
+                state.streak++;
+                fb.innerHTML = `<strong>Correct! +10 punten</strong>`;
+                setTimeout(generateQuestion, 1500);
+            } else {
+                state.streak = 0;
+                fb.innerHTML = `<strong>Helaas!</strong> Het juiste antwoord was ${state.current.ans.toFixed(1)}
+                                <div class="stappenplan">${state.current.uitleg}</div>`;
+            }
+
+            document.getElementById('scoreVal').textContent = state.score;
+            document.getElementById('streakVal').textContent = state.streak;
         }
 
-        function calculateDigibord() {
-            const { L, O, A, angleA } = state.digibordValues;
-            let res = { ...state.digibordValues };
-            if (O && A) { res.L = Math.sqrt(O*O + A*A); res.angleA = toDeg(Math.atan(O/A)); }
-            else if (L && O) { res.A = Math.sqrt(L*L - O*O); res.angleA = toDeg(Math.asin(O/L)); }
-            else if (A && angleA) { res.L = A / Math.cos(toRad(angleA)); res.O = A * Math.tan(toRad(angleA)); }
-            else if (L && angleA) { res.O = L * Math.sin(toRad(angleA)); res.A = L * Math.cos(toRad(angleA)); }
-            state.digibordValues = res;
-            drawTriangle('digibordTriangleSvg', res, 'digibord');
-            document.getElementById('digibordMessage').textContent = "Berekening uitgevoerd.";
+        function draw(id, data, interactive, targetKey = null) {
+            const svg = d3.select("#" + id);
+            svg.selectAll("*").remove();
+            
+            const w = +svg.attr("width"), h = +svg.attr("height"), p = 50;
+            const hoek = data.hoek || 30;
+            const aLen = data.A || 10;
+            const oLen = data.O || (aLen * Math.tan(toRad(hoek)));
+            
+            const scale = Math.min((w-2*p)/Math.max(aLen, 1), (h-2*p)/Math.max(oLen, 1));
+            const sa = aLen * scale, so = oLen * scale;
+            
+            const x1 = p, y1 = h - p;
+            const x2 = x1 + sa, y2 = y1;
+            const x3 = x1, y3 = y1 - so;
+
+            const g = svg.append("g");
+            
+            const lines = [
+                {x1, y1, x2, y2, k:'A'}, {x1, y1, x2:x3, y2:y3, k:'O'}, {x1:x2, y1:y2, x2:x3, y2:y3, k:'L'}
+            ];
+
+            g.selectAll("line").data(lines).enter().append("line")
+                .attr("x1", d=>d.x1).attr("y1", d=>d.y1).attr("x2", d=>d.x2).attr("y2", d=>d.y2)
+                .attr("class", d => `triangle-side ${d.k === targetKey ? 'highlight' : ''}`);
+
+            const labels = [
+                {x: (x1+x2)/2, y: y1+25, val: data.A, k:'A', label: 'A'},
+                {x: x1-15, y: (y1+y3)/2, val: data.O, k:'O', label: 'O', anchor: 'end'},
+                {x: (x2+x3)/2+15, y: (y2+y3)/2-10, val: data.L, k:'L', label: 'L'}
+            ];
+
+            g.selectAll("text").data(labels).enter().append("text")
+                .attr("x", d=>d.x).attr("y", d=>d.y).attr("text-anchor", d=>d.anchor||'middle')
+                .attr("class", d => `label-text ${state.activeKey === d.k ? 'highlight' : ''}`)
+                .text(d => {
+                    if (d.val) return `${d.label}: ${d.val.toFixed(1)}`;
+                    if (d.k === targetKey) return `${d.label}: ?`;
+                    return d.label;
+                })
+                .on("click", (e, d) => { if(interactive) { state.activeKey = d.k; state.input = ''; draw(id, data, true); } });
+
+            g.append("text").attr("x", x2-45).attr("y", y2-10).attr("class", "label-text")
+                .text(`∠${data.hoek ? data.hoek.toFixed(1) : '?'}°`)
+                .on("click", () => { if(interactive) { state.activeKey = 'hoek'; state.input = ''; draw(id, data, true); } });
+            
+            g.append("path").attr("d", `M ${x1+15},${y1} L ${x1+15},${y1-15} L ${x1},${y1-15}`)
+                .attr("fill", "none").attr("stroke", "#888");
         }
 
-        function resetDigibord() {
-            state.digibordValues = { L: null, O: null, A: null, angleA: null };
-            state.activeDigibordKey = null;
-            state.digibordInput = '';
-            document.getElementById('digibordMessage').textContent = "Klik op een label om te beginnen.";
-            drawTriangle('digibordTriangleSvg', state.digibordValues, 'digibord');
+        function calculateAll() {
+            let v = state.digiValues;
+            try {
+                if (v.O && v.A) { v.L = Math.sqrt(v.O**2 + v.A**2); v.hoek = toDeg(Math.atan(v.O/v.A)); }
+                else if (v.L && v.O) { v.A = Math.sqrt(v.L**2 - v.O**2); v.hoek = toDeg(Math.asin(v.O/v.L)); }
+                else if (v.hoek && v.A) { v.O = v.A * Math.tan(toRad(v.hoek)); v.L = v.A / Math.cos(toRad(v.hoek)); }
+                else if (v.hoek && v.L) { v.O = v.L * Math.sin(toRad(v.hoek)); v.A = v.L * Math.cos(toRad(v.hoek)); }
+            } catch(e) {}
+            draw('digiSvg', v, true);
         }
 
-        function switchMode(mode) {
-            state.mode = mode;
-            document.getElementById('quizModeWrapper').style.display = mode === 'quiz' ? 'flex' : 'none';
-            document.getElementById('digibordModeWrapper').style.display = mode === 'digibord' ? 'flex' : 'none';
-            if (mode === 'quiz') newQuestion(); else resetDigibord();
+        function resetDigi() {
+            state.digiValues = { A: null, O: null, L: null, hoek: null };
+            state.activeKey = null;
+            state.input = '';
+            draw('digiSvg', state.digiValues, true);
         }
 
         document.getElementById('themeToggle').onclick = () => {
-            const isLight = document.body.classList.toggle('light-mode');
-            document.getElementById('themeToggle').textContent = isLight ? '🌙 Dark Mode' : '☀️ Light Mode';
-            // Herteken driehoek bij thema-wissel voor kleur-update
-            if (state.mode === 'quiz') drawTriangle('questionTriangleSvg', state.currentQuestion, 'quiz');
-            else drawTriangle('digibordTriangleSvg', state.digibordValues, 'digibord');
+            document.body.classList.toggle('light-mode');
+            if(state.mode === 'quiz') draw('quizSvg', state.current.draw, false, state.current.target); 
+            else draw('digiSvg', state.digiValues, true);
         };
 
-        document.getElementById('toggleQuizMode').onclick = () => switchMode('quiz');
-        document.getElementById('toggleDigibordMode').onclick = () => switchMode('digibord');
-        
-        // Start de eerste vraag
-        newQuestion();
+        // Start
+        generateQuestion();
     </script>
 </body>
 </html>
